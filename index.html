@@ -3,255 +3,140 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dyno · Earbud Controller</title>
-
-    <!-- Tailwind CSS v4 CDN -->
+    <title>Dyno · Controller</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
     </script>
-
-    <!-- Phosphor Icons -->
     <script src="https://unpkg.com/@phosphor-icons/web">
     </script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-        /* ==========================================
-           CORE THEME VARIABLES
-           ========================================== */
         :root {
-            --theme-bg: #e5e5ea;
-            --theme-text: #000000;
-            --theme-text-muted: rgba(0, 0, 0, 0.5);
-            --glass-bg: rgba(255, 255, 255, 0.55);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --glass-shadow: rgba(0, 0, 0, 0.08);
-            --glass-inset: rgba(255, 255, 255, 0.9);
-            --glass-hover: rgba(0, 0, 0, 0.05);
-            --separator: rgba(0, 0, 0, 0.08);
-            --widget-fill: rgba(255, 255, 255, 0.9);
-            --accent: #3b82f6;
-            --accent-glow: rgba(59, 130, 246, 0.3);
-            --danger: #ef4444;
-            --success: #22c55e;
-            --warning: #f59e0b;
+            --theme-bg: #f2f2f7;
+            --theme-text: #1c1c1e;
+            --theme-text-muted: rgba(28, 28, 30, 0.5);
+            --glass-bg: rgba(255, 255, 255, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.7);
+            --glass-shadow: rgba(0, 0, 0, 0.06);
+            --glass-inset: rgba(255, 255, 255, 0.8);
+            --glass-hover: rgba(0, 0, 0, 0.04);
+            --separator: rgba(60, 60, 67, 0.08);
+            --widget-fill: rgba(255, 255, 255, 0.85);
+            --accent: #007aff;
+            --accent-glow: rgba(0, 122, 255, 0.2);
+            --danger: #ff3b30;
+            --success: #34c759;
+            --warning: #ff9500;
         }
-
         .dark {
             --theme-bg: #000000;
             --theme-text: #ffffff;
-            --theme-text-muted: rgba(255, 255, 255, 0.6);
-            --glass-bg: rgba(30, 30, 35, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.15);
-            --glass-shadow: rgba(0, 0, 0, 0.5);
-            --glass-inset: rgba(255, 255, 255, 0.08);
-            --glass-hover: rgba(255, 255, 255, 0.1);
-            --separator: rgba(255, 255, 255, 0.1);
-            --widget-fill: rgba(255, 255, 255, 0.85);
-            --accent: #60a5fa;
-            --accent-glow: rgba(96, 165, 250, 0.25);
+            --theme-text-muted: rgba(255, 255, 255, 0.5);
+            --glass-bg: rgba(28, 28, 30, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --glass-shadow: rgba(0, 0, 0, 0.4);
+            --glass-inset: rgba(255, 255, 255, 0.06);
+            --glass-hover: rgba(255, 255, 255, 0.08);
+            --separator: rgba(255, 255, 255, 0.08);
+            --widget-fill: rgba(255, 255, 255, 0.8);
+            --accent: #0a84ff;
+            --accent-glow: rgba(10, 132, 255, 0.2);
         }
-
-        /* ==========================================
-           GLOBAL RESETS
-           ========================================== */
         * {
             -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
         }
-        button:focus,
-        input:focus,
-        select:focus {
-            outline: none;
-        }
-
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--theme-bg);
             color: var(--theme-text);
-            background-image:
-                radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.4), transparent 40%),
-                radial-gradient(circle at 90% 10%, rgba(167, 139, 250, 0.4), transparent 40%),
-                radial-gradient(circle at 50% 80%, rgba(251, 146, 60, 0.3), transparent 50%),
-                radial-gradient(circle at 80% 90%, rgba(34, 197, 94, 0.25), transparent 40%);
+            background-image: radial-gradient(circle at 20% 30%, rgba(0, 122, 255, 0.08), transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(175, 82, 222, 0.08), transparent 40%);
             background-size: cover;
             background-attachment: fixed;
             min-height: 100vh;
-            transition: background-color 0.4s ease, color 0.4s ease;
-            padding: 0;
+            transition: background-color 0.4s, color 0.4s;
+            padding: 16px;
             margin: 0;
-            overflow-x: hidden;
         }
-
-        /* ==========================================
-           LIQUID GLASS COMPONENT BASE
-           ========================================== */
-        .liquid-panel {
-            background-color: var(--glass-bg);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px) saturate(1.2);
+            -webkit-backdrop-filter: blur(24px) saturate(1.2);
             border: 1px solid var(--glass-border);
-            box-shadow:
-                0 20px 40px -10px var(--glass-shadow),
-                inset 0 1px 1px 0 var(--glass-inset);
-            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+            box-shadow: 0 12px 40px -8px var(--glass-shadow), inset 0 0.5px 1px var(--glass-inset);
+            transition: background 0.4s, border 0.4s, box-shadow 0.4s;
         }
-
-        .liquid-panel-heavy {
-            background-color: var(--glass-bg);
-            backdrop-filter: blur(32px);
-            -webkit-backdrop-filter: blur(32px);
-            border: 1px solid var(--glass-border);
-            box-shadow:
-                0 25px 50px -12px var(--glass-shadow),
-                inset 0 1px 1px 0 var(--glass-inset);
-            transition: background-color 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
-        }
-
         .glass-btn {
-            transition: all 0.2s ease;
+            transition: all 0.18s ease;
             cursor: pointer;
             user-select: none;
         }
         .glass-btn:active {
-            transform: scale(0.95);
-            opacity: 0.8;
+            transform: scale(0.96);
+            opacity: 0.7;
         }
         .glass-hover:hover {
-            background-color: var(--glass-hover);
+            background: var(--glass-hover);
         }
-
-        .border-separator {
+        .border-sep {
             border-color: var(--separator);
-            transition: border-color 0.4s ease;
         }
         .text-muted {
             color: var(--theme-text-muted);
-            transition: color 0.4s ease;
         }
-        .bg-separator {
-            background-color: var(--separator);
-            transition: background-color 0.4s ease;
-        }
-
-        ::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* ==========================================
-           CUSTOM SCROLL
-           ========================================== */
-        .scrollable {
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-        .scrollable::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* ==========================================
-           RANGE SLIDER STYLING
-           ========================================== */
-        input[type="range"] {
-            -webkit-appearance: none;
-            appearance: none;
-            background: transparent;
-            cursor: pointer;
-            width: 100%;
-        }
-        input[type="range"]:focus {
-            outline: none;
-        }
-        input[type="range"]::-webkit-slider-runnable-track {
-            height: 4px;
+        .bg-sep {
             background: var(--separator);
-            border-radius: 4px;
-        }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            margin-top: -8px;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 0 20px var(--accent-glow);
-            transition: all 0.2s ease;
-        }
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-        }
-        input[type="range"]::-moz-range-track {
-            height: 4px;
-            background: var(--separator);
-            border-radius: 4px;
-            border: none;
-        }
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: var(--accent);
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 0 20px var(--accent-glow);
-            cursor: pointer;
         }
 
-        /* ==========================================
-           TOGGLE SWITCH
-           ========================================== */
+        /* toggles */
         .toggle-track {
-            width: 48px;
-            height: 28px;
-            border-radius: 14px;
+            width: 44px;
+            height: 26px;
+            border-radius: 13px;
             background: var(--separator);
-            transition: background 0.3s ease;
             position: relative;
             cursor: pointer;
             flex-shrink: 0;
+            transition: background 0.25s;
         }
         .toggle-track.active {
             background: var(--accent);
         }
         .toggle-thumb {
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: white;
             position: absolute;
             top: 3px;
             left: 3px;
-            transition: transform 0.3s ease;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
         }
         .toggle-track.active .toggle-thumb {
-            transform: translateX(20px);
+            transform: translateX(18px);
         }
 
-        /* ==========================================
-           CONNECTION PULSE
-           ========================================== */
-        .pulse-dot {
+        /* pulse dot */
+        .pulse {
             width: 10px;
             height: 10px;
             border-radius: 50%;
             display: inline-block;
-            transition: all 0.3s ease;
+            flex-shrink: 0;
         }
-        .pulse-dot.connected {
+        .pulse.on {
             background: var(--success);
-            box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
-            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
+            animation: pulse 2s infinite;
         }
-        .pulse-dot.disconnected {
+        .pulse.off {
             background: var(--danger);
-            box-shadow: 0 0 12px rgba(239, 68, 68, 0.3);
+            box-shadow: 0 0 12px rgba(255, 59, 48, 0.2);
         }
-        .pulse-dot.connecting {
+        .pulse.pending {
             background: var(--warning);
-            box-shadow: 0 0 12px rgba(245, 158, 11, 0.4);
-            animation: pulse 1s ease-in-out infinite;
+            animation: pulse 1s infinite;
         }
         @keyframes pulse {
             0%,
@@ -265,69 +150,59 @@
             }
         }
 
-        /* ==========================================
-           EQ SLIDER LABELS
-           ========================================== */
-        .eq-label {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--theme-text-muted);
-            text-align: center;
+        /* range */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: transparent;
+            width: 100%;
+            cursor: pointer;
         }
-        .eq-value {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--theme-text);
-            min-width: 24px;
-            text-align: center;
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 3px;
+            background: var(--separator);
+            border-radius: 2px;
         }
-
-        /* ==========================================
-           FEATURE CARD
-           ========================================== */
-        .feature-card {
-            transition: all 0.3s ease;
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: -8px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 0 16px var(--accent-glow);
         }
-        .feature-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 30px 60px -15px var(--glass-shadow);
+        input[type="range"]::-moz-range-track {
+            height: 3px;
+            background: var(--separator);
+            border-radius: 2px;
         }
-        .feature-card.disabled {
-            opacity: 0.5;
-            pointer-events: none;
-        }
-
-        /* ==========================================
-           BADGE
-           ========================================== */
-        .badge {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.06em;
-            padding: 2px 10px;
-            border-radius: 20px;
-            background: var(--glass-hover);
-            border: 1px solid var(--glass-border);
-            color: var(--theme-text-muted);
-        }
-        .badge-live {
-            background: rgba(34, 197, 94, 0.15);
-            color: var(--success);
-            border-color: rgba(34, 197, 94, 0.2);
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--accent);
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 0 16px var(--accent-glow);
         }
 
-        /* ==========================================
-           CONFIG MODAL OVERLAY
-           ========================================== */
+        /* scroll */
+        .scrollable {
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
+        .scrollable::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* config overlay */
         .config-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             display: none;
             align-items: center;
             justify-content: center;
@@ -338,151 +213,120 @@
             display: flex;
         }
 
-        /* ==========================================
-           LOG CONTAINER
-           ========================================== */
         .log-line {
-            font-family: 'SF Mono', 'Menlo', monospace;
-            font-size: 11px;
-            padding: 2px 0;
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            padding: 1px 0;
             border-bottom: 1px solid var(--separator);
             opacity: 0.7;
-            transition: opacity 0.3s ease;
-        }
-        .log-line:hover {
-            opacity: 1;
-        }
-        .log-line .timestamp {
-            color: var(--theme-text-muted);
-            margin-right: 8px;
         }
         .log-line .tag {
             font-weight: 600;
-            padding: 0 6px;
-            border-radius: 4px;
-            margin-right: 6px;
-            font-size: 9px;
+            padding: 0 4px;
+            border-radius: 3px;
+            font-size: 8px;
+            margin-right: 4px;
         }
         .log-line .tag.info {
-            background: rgba(59, 130, 246, 0.2);
+            background: rgba(0, 122, 255, 0.15);
             color: var(--accent);
         }
         .log-line .tag.success {
-            background: rgba(34, 197, 94, 0.2);
+            background: rgba(52, 199, 89, 0.15);
             color: var(--success);
         }
         .log-line .tag.error {
-            background: rgba(239, 68, 68, 0.2);
+            background: rgba(255, 59, 48, 0.15);
             color: var(--danger);
         }
         .log-line .tag.warn {
-            background: rgba(245, 158, 11, 0.2);
+            background: rgba(255, 149, 0, 0.15);
             color: var(--warning);
         }
         .log-line .tag.data {
-            background: rgba(167, 139, 250, 0.2);
-            color: #a78bfa;
+            background: rgba(175, 82, 222, 0.15);
+            color: #af52de;
+        }
+        .badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 10px;
+            border-radius: 20px;
+            background: var(--glass-hover);
+            border: 1px solid var(--glass-border);
+            color: var(--theme-text-muted);
+        }
+        .badge-live {
+            background: rgba(52, 199, 89, 0.12);
+            color: var(--success);
+            border-color: rgba(52, 199, 89, 0.2);
         }
 
-        /* ==========================================
-           RESPONSIVE
-           ========================================== */
         @media (max-width: 640px) {
             body {
                 padding: 12px;
             }
-            .liquid-panel {
-                border-radius: 1.5rem !important;
-            }
-            .liquid-panel-heavy {
-                border-radius: 1.5rem !important;
-            }
         }
     </style>
 </head>
-<body class="p-4 sm:p-6 md:p-8 lg:p-10 selection:bg-accent/30">
-
-    <!-- ==========================================
-    CONFIG OVERLAY
-    ========================================== -->
+<body>
+    <!-- Config Overlay -->
     <div id="configOverlay" class="config-overlay">
-        <div class="liquid-panel-heavy rounded-[2.5rem] p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto scrollable">
+        <div class="glass-panel rounded-[2.5rem] p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto scrollable">
             <div class="flex justify-between items-center mb-5">
-                <h3 class="text-xl font-bold">⚙️ Configure Feature</h3>
-                <button id="configCloseBtn" class="w-10 h-10 rounded-full glass-hover flex items-center justify-center glass-btn text-2xl">
-                    <i class="ph ph-x"></i>
-                </button>
+                <h3 class="text-xl font-bold">⚙️ Configure</h3>
+                <button id="configCloseBtn" class="w-10 h-10 rounded-full glass-hover flex items-center justify-center glass-btn text-2xl"><i class="ph ph-x"></i></button>
             </div>
             <div class="space-y-4">
-                <div>
-                    <label class="text-sm font-semibold text-muted block mb-1">Feature Name</label>
-                    <input id="configFeatureName" type="text" class="w-full liquid-panel rounded-xl px-4 py-3 text-[16px] font-medium bg-transparent border border-separator" placeholder="e.g. EQ Bass" readonly />
-                </div>
-                <div>
-                    <label class="text-sm font-semibold text-muted block mb-1">Service UUID</label>
-                    <input id="configServiceUuid" type="text" class="w-full liquid-panel rounded-xl px-4 py-3 text-[16px] font-mono bg-transparent border border-separator" placeholder="0000xxxx-0000-1000-8000-00805f9b34fb" />
-                </div>
-                <div>
-                    <label class="text-sm font-semibold text-muted block mb-1">Characteristic UUID</label>
-                    <input id="configCharUuid" type="text" class="w-full liquid-panel rounded-xl px-4 py-3 text-[16px] font-mono bg-transparent border border-separator" placeholder="0000xxxx-0000-1000-8000-00805f9b34fb" />
-                </div>
-                <div>
-                    <label class="text-sm font-semibold text-muted block mb-1">Command Hex (e.g. 01 02 03)</label>
-                    <input id="configCommandHex" type="text" class="w-full liquid-panel rounded-xl px-4 py-3 text-[16px] font-mono bg-transparent border border-separator" placeholder="01 02 03" />
-                </div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Feature</label><input id="configFeatureName" type="text" class="w-full glass-panel rounded-xl px-4 py-3 text-[16px] font-medium bg-transparent border border-sep" readonly /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Service UUID</label><input id="configServiceUuid" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Characteristic UUID</label><input id="configCharUuid" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Command Hex (e.g. 01 02 {val})</label><input id="configCommandHex" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="01 02" /></div>
                 <div class="flex gap-3 pt-2">
                     <button id="configSaveBtn" class="flex-1 py-3 rounded-xl bg-accent text-white font-bold glass-btn shadow-lg">Save &amp; Test</button>
-                    <button id="configCancelBtn" class="flex-1 py-3 rounded-xl bg-glass-hover font-semibold glass-btn border border-separator">Cancel</button>
+                    <button id="configCancelBtn" class="flex-1 py-3 rounded-xl glass-hover font-semibold glass-btn border border-sep">Cancel</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- ==========================================
-    HEADER
-    ========================================== -->
-    <header class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <!-- Header -->
+    <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-3">
-                <span class="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">Dyno</span>
-                <span class="text-muted font-light text-xl">·</span>
+            <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-2">
+                <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Dyno</span>
+                <span class="text-muted text-xl font-light">·</span>
                 <span class="text-xl font-semibold">Controller</span>
             </h1>
-            <p class="text-muted text-sm font-medium mt-0.5 flex items-center gap-2">
+            <div class="flex items-center gap-3 text-sm font-medium text-muted">
                 <span id="deviceNameDisplay">Mustang Dyno</span>
-                <span class="w-1 h-1 rounded-full bg-separator"></span>
-                <span id="connectionStatusText" class="text-muted">disconnected</span>
-            </p>
+                <span class="w-1 h-1 rounded-full bg-sep"></span>
+                <span id="connectionStatusText">disconnected</span>
+            </div>
         </div>
-        <div class="flex items-center gap-3 w-full sm:w-auto">
-            <button id="themeToggleBtn" class="liquid-panel w-11 h-11 rounded-full glass-hover flex items-center justify-center glass-btn text-xl shadow-xl flex-shrink-0">
+        <div class="flex items-center gap-3">
+            <button id="themeToggleBtn" class="glass-panel w-11 h-11 rounded-full glass-hover flex items-center justify-center glass-btn text-xl shadow-lg">
                 <i class="ph-fill ph-moon dark:hidden"></i>
                 <i class="ph-fill ph-sun hidden dark:block text-yellow-400"></i>
             </button>
-            <button id="connectBtn" class="liquid-panel px-5 py-2.5 rounded-full glass-hover glass-btn font-bold text-sm flex items-center gap-2 shadow-xl flex-1 sm:flex-none justify-center">
-                <span class="pulse-dot disconnected" id="statusDot"></span>
+            <button id="connectBtn" class="glass-panel px-5 py-2.5 rounded-full glass-hover glass-btn font-bold text-sm flex items-center gap-2 shadow-lg">
+                <span class="pulse off" id="statusDot"></span>
                 <span id="connectBtnText">Connect</span>
             </button>
         </div>
     </header>
 
-    <!-- ==========================================
-    MAIN GRID
-    ========================================== -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-5 items-start">
+    <!-- Main Grid 4-col -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
 
-        <!-- ==========================================
-        COLUMN 1 — STATUS & BATTERY + DISCOVERY
-        ========================================== -->
+        <!-- Col 1: Status + Battery + Log -->
         <div class="flex flex-col gap-5">
-
-            <!-- Battery & Status -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl">
-                            <i class="ph-fill ph-battery-high"></i>
-                        </div>
+                        <div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl"><i class="ph-fill ph-battery-high"></i></div>
                         <div>
                             <div class="text-sm font-medium text-muted">Battery</div>
                             <div class="text-3xl font-black" id="batteryDisplay">--%</div>
@@ -490,280 +334,148 @@
                     </div>
                     <div class="text-right">
                         <div class="text-xs font-semibold text-muted uppercase tracking-wider">Status</div>
-                        <div class="text-sm font-bold flex items-center gap-2 justify-end mt-0.5">
-                            <span id="statusBadge" class="badge">—</span>
-                        </div>
+                        <div id="statusBadge" class="badge mt-0.5">—</div>
                     </div>
                 </div>
-                <div class="w-full h-1.5 bg-separator rounded-full mt-3 overflow-hidden">
+                <div class="w-full h-1.5 bg-sep rounded-full mt-3 overflow-hidden">
                     <div id="batteryBar" class="h-full bg-gradient-to-r from-green-400 to-blue-400 rounded-full transition-all duration-700" style="width:0%"></div>
                 </div>
             </div>
 
-            <!-- Discovery / Services -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2">
-                        <i class="ph ph-brackets-curly text-accent"></i>
-                        Discovered Services
-                    </h3>
-                    <button id="refreshServicesBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full flex items-center gap-1">
-                        <i class="ph ph-arrows-clockwise"></i> Refresh
-                    </button>
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-brackets-curly text-accent"></i>Services</h3>
+                    <button id="refreshServicesBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full flex items-center gap-1"><i class="ph ph-arrows-clockwise"></i>Refresh</button>
                 </div>
-                <div id="servicesList" class="space-y-2 max-h-48 overflow-y-auto scrollable">
-                    <div class="text-sm text-muted italic">Click Connect to discover services...</div>
+                <div id="servicesList" class="space-y-2 max-h-48 overflow-y-auto scrollable text-xs font-mono">
+                    <div class="text-muted italic">Connect to discover</div>
                 </div>
             </div>
 
-            <!-- Activity Log -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2">
-                        <i class="ph ph-terminal text-accent"></i>
-                        Activity Log
-                    </h3>
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-terminal text-accent"></i>Log</h3>
                     <button id="clearLogBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full">Clear</button>
                 </div>
-                <div id="logContainer" class="max-h-40 overflow-y-auto scrollable space-y-0.5 text-xs font-mono">
-                    <div class="log-line"><span class="timestamp">[init]</span><span class="tag info">info</span> Ready — tap Connect to pair.</div>
+                <div id="logContainer" class="max-h-40 overflow-y-auto scrollable space-y-0.5">
+                    <div class="log-line"><span class="timestamp">[init]</span><span class="tag info">info</span> Ready — tap Connect.</div>
                 </div>
             </div>
-
         </div>
 
-        <!-- ==========================================
-        COLUMN 2 — EQ + MODE + CLEANUP + FIND
-        ========================================== -->
+        <!-- Col 2: EQ + Mode/Cleanup/Find -->
         <div class="flex flex-col gap-5">
-
-            <!-- EQ Sliders -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl feature-card" id="eqCard">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl feature-card" id="eqCard">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2">
-                        <i class="ph-fill ph-sliders text-accent"></i>
-                        Equalizer
-                    </h3>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="eq" data-name="EQ">
-                        <i class="ph ph-gear"></i> Config
-                    </button>
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-sliders text-accent"></i>Equalizer</h3>
+                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="eq" data-name="EQ"><i class="ph ph-gear"></i></button>
                 </div>
                 <div class="space-y-3" id="eqContainer">
-                    <div class="eq-band flex items-center gap-3">
-                        <span class="eq-label w-10">Bass</span>
-                        <input type="range" min="0" max="100" value="50" class="flex-1" data-band="bass" />
-                        <span class="eq-value" id="eqVal-bass">50</span>
-                    </div>
-                    <div class="eq-band flex items-center gap-3">
-                        <span class="eq-label w-10">Mid</span>
-                        <input type="range" min="0" max="100" value="50" class="flex-1" data-band="mid" />
-                        <span class="eq-value" id="eqVal-mid">50</span>
-                    </div>
-                    <div class="eq-band flex items-center gap-3">
-                        <span class="eq-label w-10">Treble</span>
-                        <input type="range" min="0" max="100" value="50" class="flex-1" data-band="treble" />
-                        <span class="eq-value" id="eqVal-treble">50</span>
-                    </div>
-                    <div class="text-xs text-muted text-center mt-1 font-medium">⚡ Sliders are live — configure UUID to enable</div>
+                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Bass</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="bass" /><span class="eq-value text-sm font-bold" id="eqVal-bass">50</span></div>
+                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Mid</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="mid" /><span class="eq-value text-sm font-bold" id="eqVal-mid">50</span></div>
+                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Treble</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="treble" /><span class="eq-value text-sm font-bold" id="eqVal-treble">50</span></div>
+                    <div class="text-[10px] text-muted text-center">Configure to enable live writes</div>
                 </div>
             </div>
 
-            <!-- Mode + Cleanup + Find (row) -->
             <div class="grid grid-cols-3 gap-3">
-                <!-- Gaming/Music Mode -->
-                <div class="liquid-panel-heavy rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="modeCard">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl mb-2">
-                        <i class="ph-fill ph-game-controller"></i>
-                    </div>
+                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="modeCard">
+                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl mb-2"><i class="ph-fill ph-game-controller"></i></div>
                     <span class="text-xs font-semibold text-muted uppercase tracking-wider">Mode</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="modeLabel" class="text-sm font-bold">Music</span>
-                        <button id="modeToggleBtn" class="toggle-track" style="width:36px;height:20px;">
-                            <span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span>
-                        </button>
-                    </div>
+                    <div class="flex items-center gap-2 mt-1"><span id="modeLabel" class="text-sm font-bold">Music</span><button id="modeToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
                     <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="mode" data-name="Mode Switch">⚙</button>
                 </div>
-
-                <!-- Quick Cleanup -->
-                <div class="liquid-panel-heavy rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="cleanupCard">
-                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl mb-2">
-                        <i class="ph-fill ph-hand-soap"></i>
-                    </div>
+                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="cleanupCard">
+                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl mb-2"><i class="ph-fill ph-hand-soap"></i></div>
                     <span class="text-xs font-semibold text-muted uppercase tracking-wider">Cleanup</span>
-                    <button id="cleanupBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full bg-glass-hover border border-separator w-full">Run</button>
+                    <button id="cleanupBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Run</button>
                     <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="cleanup" data-name="Quick Cleanup">⚙</button>
                 </div>
-
-                <!-- Find My Buds -->
-                <div class="liquid-panel-heavy rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="findCard">
-                    <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl mb-2">
-                        <i class="ph-fill ph-radar"></i>
-                    </div>
+                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="findCard">
+                    <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl mb-2"><i class="ph-fill ph-radar"></i></div>
                     <span class="text-xs font-semibold text-muted uppercase tracking-wider">Find</span>
-                    <button id="findBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full bg-glass-hover border border-separator w-full">Ping</button>
+                    <button id="findBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Ping</button>
                     <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="find" data-name="Find My Buds">⚙</button>
                 </div>
             </div>
 
-            <!-- Rename -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl feature-card" id="renameCard">
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 text-xl">
-                            <i class="ph-fill ph-pencil"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-semibold text-muted uppercase tracking-wider">Rename</span>
-                            <div class="flex items-center gap-2 mt-0.5">
-                                <input id="renameInput" type="text" value="Dyno Buds" class="bg-transparent border-b border-separator text-sm font-bold w-32 focus:border-accent transition-colors" maxlength="20" />
-                                <button id="renameBtn" class="text-xs font-bold glass-btn glass-hover px-3 py-1 rounded-full bg-glass-hover border border-separator">Set</button>
-                            </div>
+            <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card" id="renameCard">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 text-xl"><i class="ph-fill ph-pencil"></i></div>
+                        <div><span class="text-xs font-semibold text-muted uppercase tracking-wider">Rename</span>
+                            <div class="flex items-center gap-2 mt-0.5"><input id="renameInput" type="text" value="Dyno Buds" class="bg-transparent border-b border-sep text-sm font-bold w-32 focus:border-accent transition-colors" maxlength="20" /><button id="renameBtn" class="text-xs font-bold glass-btn glass-hover px-3 py-1 rounded-full glass-hover border border-sep">Set</button></div>
                         </div>
                     </div>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="rename" data-name="Rename">
-                        <i class="ph ph-gear"></i>
-                    </button>
+                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="rename" data-name="Rename"><i class="ph ph-gear"></i></button>
                 </div>
             </div>
-
         </div>
 
-        <!-- ==========================================
-        COLUMN 3 — GESTURES + ANC + DUAL PAIR + ADVANCED
-        ========================================== -->
+        <!-- Col 3: Gestures + ANC/Dual -->
         <div class="flex flex-col gap-5">
-
-            <!-- Gesture Mapping -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl feature-card" id="gestureCard">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl feature-card" id="gestureCard">
                 <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2">
-                        <i class="ph-fill ph-hand-tap text-accent"></i>
-                        Gestures
-                    </h3>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="gesture" data-name="Gesture Mapping">
-                        <i class="ph ph-gear"></i> Config
-                    </button>
+                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-hand-tap text-accent"></i>Gestures</h3>
+                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="gesture" data-name="Gesture Mapping"><i class="ph ph-gear"></i></button>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <span class="text-xs font-semibold text-muted">Left</span>
-                        <select class="w-full mt-1 liquid-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-separator">
-                            <option>Tap: Play/Pause</option>
-                            <option>Tap: Next</option>
-                            <option>Tap: Previous</option>
-                            <option>Tap: Volume Up</option>
-                            <option>Tap: Volume Down</option>
-                            <option>Hold: ANC</option>
-                            <option>Hold: Voice Assistant</option>
-                        </select>
-                        <select class="w-full mt-1.5 liquid-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-separator">
-                            <option>Double Tap: Next</option>
-                            <option>Double Tap: Previous</option>
-                            <option>Double Tap: Play/Pause</option>
-                            <option>Double Tap: Volume Up</option>
-                        </select>
+                    <div><span class="text-xs font-semibold text-muted">Left</span>
+                        <select class="w-full mt-1 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
+                        <select class="w-full mt-1.5 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
                     </div>
-                    <div>
-                        <span class="text-xs font-semibold text-muted">Right</span>
-                        <select class="w-full mt-1 liquid-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-separator">
-                            <option>Tap: Play/Pause</option>
-                            <option>Tap: Next</option>
-                            <option>Tap: Previous</option>
-                            <option>Tap: Volume Up</option>
-                            <option>Tap: Volume Down</option>
-                            <option>Hold: ANC</option>
-                            <option>Hold: Voice Assistant</option>
-                        </select>
-                        <select class="w-full mt-1.5 liquid-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-separator">
-                            <option>Double Tap: Next</option>
-                            <option>Double Tap: Previous</option>
-                            <option>Double Tap: Play/Pause</option>
-                            <option>Double Tap: Volume Up</option>
-                        </select>
+                    <div><span class="text-xs font-semibold text-muted">Right</span>
+                        <select class="w-full mt-1 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
+                        <select class="w-full mt-1.5 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
                     </div>
                 </div>
                 <button id="gestureApplyBtn" class="w-full mt-3 py-2 rounded-xl bg-accent/10 text-accent font-bold glass-btn text-sm">Apply Gestures</button>
             </div>
 
-            <!-- ANC + Dual Pairing -->
             <div class="grid grid-cols-2 gap-3">
-                <!-- ANC Toggle -->
-                <div class="liquid-panel-heavy rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="ancCard">
-                    <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl mb-2">
-                        <i class="ph-fill ph-ear"></i>
-                    </div>
+                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="ancCard">
+                    <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl mb-2"><i class="ph-fill ph-ear"></i></div>
                     <span class="text-xs font-semibold text-muted uppercase tracking-wider">ANC</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="ancLabel" class="text-sm font-bold">Off</span>
-                        <button id="ancToggleBtn" class="toggle-track" style="width:36px;height:20px;">
-                            <span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span>
-                        </button>
-                    </div>
+                    <div class="flex items-center gap-2 mt-1"><span id="ancLabel" class="text-sm font-bold">Off</span><button id="ancToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
                     <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="anc" data-name="ANC Toggle">⚙</button>
                 </div>
-
-                <!-- Dual Device Pairing -->
-                <div class="liquid-panel-heavy rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="dualCard">
-                    <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 text-xl mb-2">
-                        <i class="ph-fill ph-devices"></i>
-                    </div>
+                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="dualCard">
+                    <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 text-xl mb-2"><i class="ph-fill ph-devices"></i></div>
                     <span class="text-xs font-semibold text-muted uppercase tracking-wider">Dual Pair</span>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span id="dualLabel" class="text-sm font-bold">Off</span>
-                        <button id="dualToggleBtn" class="toggle-track" style="width:36px;height:20px;">
-                            <span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span>
-                        </button>
-                    </div>
+                    <div class="flex items-center gap-2 mt-1"><span id="dualLabel" class="text-sm font-bold">Off</span><button id="dualToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
                     <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="dual" data-name="Dual Pairing">⚙</button>
                 </div>
             </div>
+        </div>
 
-            <!-- Advanced / Raw GATT Explorer -->
-            <div class="liquid-panel-heavy rounded-[2rem] p-5 shadow-xl">
+        <!-- Col 4: Advanced & extras -->
+        <div class="flex flex-col gap-5">
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
                 <details class="group">
                     <summary class="flex justify-between items-center cursor-pointer list-none">
-                        <span class="font-bold text-sm flex items-center gap-2">
-                            <i class="ph ph-code text-accent"></i>
-                            Advanced GATT Explorer
-                        </span>
-                        <span class="text-muted text-xs group-open:rotate-180 transition-transform">
-                            <i class="ph ph-caret-down"></i>
-                        </span>
+                        <span class="font-bold text-sm flex items-center gap-2"><i class="ph ph-code text-accent"></i>Advanced GATT</span>
+                        <span class="text-muted text-xs group-open:rotate-180 transition-transform"><i class="ph ph-caret-down"></i></span>
                     </summary>
                     <div class="mt-3 space-y-3">
-                        <div class="flex gap-2">
-                            <input id="rawServiceUuid" type="text" placeholder="Service UUID" class="flex-1 liquid-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-separator" />
-                            <input id="rawCharUuid" type="text" placeholder="Char UUID" class="flex-1 liquid-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-separator" />
-                        </div>
-                        <div class="flex gap-2">
-                            <input id="rawCommandHex" type="text" placeholder="Hex to write (e.g. 01 02)" class="flex-1 liquid-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-separator" />
-                            <button id="rawWriteBtn" class="px-4 py-2 rounded-xl bg-accent text-white font-bold glass-btn text-xs">Write</button>
-                            <button id="rawReadBtn" class="px-4 py-2 rounded-xl bg-glass-hover font-bold glass-btn text-xs border border-separator">Read</button>
-                        </div>
-                        <div id="rawResult" class="text-xs font-mono text-muted p-2 rounded-xl bg-separator/20 min-h-8 break-all">Awaiting action...</div>
+                        <div class="flex gap-2"><input id="rawServiceUuid" type="text" placeholder="Service UUID" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><input id="rawCharUuid" type="text" placeholder="Char UUID" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /></div>
+                        <div class="flex gap-2"><input id="rawCommandHex" type="text" placeholder="Hex to write" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><button id="rawWriteBtn" class="px-4 py-2 rounded-xl bg-accent text-white font-bold glass-btn text-xs">Write</button><button id="rawReadBtn" class="px-4 py-2 rounded-xl glass-hover font-bold glass-btn text-xs border border-sep">Read</button></div>
+                        <div id="rawResult" class="text-xs font-mono text-muted p-2 rounded-xl bg-sep/20 min-h-8 break-all">Awaiting action</div>
                     </div>
                 </details>
             </div>
-
+            <div class="glass-panel rounded-[2rem] p-5 shadow-xl text-center text-muted text-xs">
+                <p class="font-medium">💡 Each feature has a ⚙ button to set its UUIDs &amp; command bytes.</p>
+                <p class="mt-1">Use the Advanced panel to test raw commands.</p>
+            </div>
         </div>
 
     </div>
 
-    <!-- ==========================================
-    FOOTER
-    ========================================== -->
     <footer class="mt-8 text-center text-xs text-muted font-medium flex flex-wrap justify-center gap-4 items-center">
-        <span>Mustang Dyno · Web Bluetooth Controller</span>
-        <span class="w-1 h-1 rounded-full bg-separator"></span>
-        <span>Powered by <span class="text-accent">Web Bluetooth API</span></span>
-        <span class="w-1 h-1 rounded-full bg-separator"></span>
-        <span class="flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-green-400/50 animate-pulse"></span> live</span>
+        <span>Mustang Dyno · Web Bluetooth</span>
+        <span class="w-1 h-1 rounded-full bg-sep"></span>
+        <span>Glass UI · <span class="text-accent">live</span></span>
     </footer>
 
-    <!-- ==========================================
-    JAVASCRIPT — Full App Logic
-    ========================================== -->
     <script>
         (function() {
             'use strict';
@@ -794,34 +506,24 @@
             const configCharUuid = $('#configCharUuid');
             const configCommandHex = $('#configCommandHex');
 
-            // EQ
             const eqSliders = $$('#eqContainer input[type="range"]');
-            const eqValues = {};
-
-            // Toggles
             const modeToggleBtn = $('#modeToggleBtn');
             const modeLabel = $('#modeLabel');
             const ancToggleBtn = $('#ancToggleBtn');
             const ancLabel = $('#ancLabel');
             const dualToggleBtn = $('#dualToggleBtn');
             const dualLabel = $('#dualLabel');
-
-            // Buttons
             const cleanupBtn = $('#cleanupBtn');
             const findBtn = $('#findBtn');
             const renameBtn = $('#renameBtn');
             const renameInput = $('#renameInput');
             const gestureApplyBtn = $('#gestureApplyBtn');
-
-            // Raw
             const rawServiceUuid = $('#rawServiceUuid');
             const rawCharUuid = $('#rawCharUuid');
             const rawCommandHex = $('#rawCommandHex');
             const rawWriteBtn = $('#rawWriteBtn');
             const rawReadBtn = $('#rawReadBtn');
             const rawResult = $('#rawResult');
-
-            // Config triggers
             const configTriggers = $$('.config-trigger');
 
             // ---- state ----
@@ -833,7 +535,6 @@
             let characteristics = {};
             let logCount = 0;
 
-            // Feature configs stored in memory
             const featureConfigs = {
                 eq: { service: '', char: '', cmd: '' },
                 mode: { service: '', char: '', cmd: '' },
@@ -844,7 +545,6 @@
                 anc: { service: '', char: '', cmd: '' },
                 dual: { service: '', char: '', cmd: '' },
             };
-
             let activeConfigFeature = null;
 
             // ---- helpers ----
@@ -859,93 +559,95 @@
                 logContainer.appendChild(el);
                 logContainer.scrollTop = logContainer.scrollHeight;
                 logCount++;
-                if (logCount > 200) {
-                    logContainer.removeChild(logContainer.firstChild);
-                    logCount--;
-                }
+                if (logCount > 200) { logContainer.removeChild(logContainer.firstChild);
+                    logCount--; }
             }
 
             function setStatus(connected, state = '') {
                 isConnected = connected;
                 if (connected) {
-                    statusDot.className = 'pulse-dot connected';
+                    statusDot.className = 'pulse on';
                     connectBtnText.textContent = 'Disconnect';
                     connectionStatusText.textContent = 'connected';
                     statusBadge.textContent = '🟢 Online';
                     statusBadge.className = 'badge badge-live';
                 } else {
-                    statusDot.className = 'pulse-dot disconnected';
+                    statusDot.className = 'pulse off';
                     connectBtnText.textContent = 'Connect';
                     connectionStatusText.textContent = 'disconnected';
                     statusBadge.textContent = '⛔ Offline';
                     statusBadge.className = 'badge';
                 }
                 if (state === 'connecting') {
-                    statusDot.className = 'pulse-dot connecting';
+                    statusDot.className = 'pulse pending';
                     connectBtnText.textContent = 'Connecting…';
                     connectionStatusText.textContent = 'connecting';
                 }
             }
 
-            function updateBattery(percent) {
-                const p = Math.min(100, Math.max(0, percent));
+            function updateBattery(pct) {
+                const p = Math.min(100, Math.max(0, pct));
                 batteryDisplay.textContent = p + '%';
                 batteryBar.style.width = p + '%';
-                if (p > 60) batteryBar.className = 'h-full bg-gradient-to-r from-green-400 to-emerald-400 rounded-full transition-all duration-700';
-                else if (p > 30) batteryBar.className = 'h-full bg-gradient-to-r from-yellow-400 to-amber-400 rounded-full transition-all duration-700';
-                else batteryBar.className = 'h-full bg-gradient-to-r from-red-400 to-rose-400 rounded-full transition-all duration-700';
+                batteryBar.className = 'h-full rounded-full transition-all duration-700 ' +
+                    (p > 60 ? 'bg-gradient-to-r from-green-400 to-emerald-400' :
+                        p > 30 ? 'bg-gradient-to-r from-yellow-400 to-amber-400' :
+                        'bg-gradient-to-r from-red-400 to-rose-400');
             }
 
             function renderServices() {
                 if (!services.length) {
-                    servicesList.innerHTML =
-                        `<div class="text-sm text-muted italic">No services discovered. Try Refresh.</div>`;
+                    servicesList.innerHTML = `<div class="text-muted italic text-sm">No services discovered.</div>`;
                     return;
                 }
                 let html = '';
                 for (const svc of services) {
                     const chars = characteristics[svc.uuid] || [];
-                    html += `<div class="text-xs font-mono border-b border-separator pb-2 last:border-0">
-                                <div class="font-bold text-accent flex items-center gap-2">
+                    html += `<div class="border-b border-sep pb-2 last:border-0">
+                                <div class="font-bold text-accent text-xs flex items-center gap-2">
                                     <span>${svc.uuid}</span>
-                                    <span class="text-[10px] font-normal text-muted">${svc.isPrimary ? 'primary' : 'secondary'}</span>
+                                    <span class="text-[9px] font-normal text-muted">${svc.isPrimary ? 'primary' : 'secondary'}</span>
                                 </div>
                                 ${chars.length ? chars.map(c => `
-                                    <div class="pl-3 text-muted flex items-center gap-2 text-[11px]">
+                                    <div class="pl-3 text-muted flex items-center gap-2 text-[10px]">
                                         <span>${c.uuid}</span>
-                                        ${c.properties.map(p => `<span class="text-[9px] bg-separator/30 px-1.5 py-0.5 rounded">${p}</span>`).join('')}
+                                        ${c.properties.map(p => `<span class="text-[8px] bg-sep/30 px-1.5 py-0.5 rounded">${p}</span>`).join('')}
                                     </div>
-                                `).join('') : '<div class="pl-3 text-muted text-[11px] italic">No characteristics</div>'}
+                                `).join('') : '<div class="pl-3 text-muted text-[10px] italic">No characteristics</div>'}
                             </div>`;
                 }
                 servicesList.innerHTML = html;
             }
 
-            // ---- BLE ----
+            // ---- BLE connection with retry ----
             async function connect() {
                 if (isConnecting) return;
                 if (isConnected && gattServer) {
-                    try {
-                        gattServer.disconnect();
-                    } catch (e) { /* ignore */ }
+                    try { gattServer.disconnect(); } catch (e) {}
                     setStatus(false);
                     device = null;
                     gattServer = null;
                     services = [];
                     characteristics = {};
                     renderServices();
-                    log('Disconnected manually', 'info');
+                    log('Disconnected', 'info');
                     return;
                 }
 
                 isConnecting = true;
                 setStatus(false, 'connecting');
-                log('Requesting Bluetooth device…', 'info');
+                log('Requesting device…', 'info');
 
                 try {
+                    // Request with common services to improve compatibility
+                    const commonServices = [
+                        '0000180f-0000-1000-8000-00805f9b34fb', // Battery
+                        '00001800-0000-1000-8000-00805f9b34fb', // Generic Access
+                        '00001801-0000-1000-8000-00805f9b34fb', // Generic Attribute
+                    ];
                     device = await navigator.bluetooth.requestDevice({
                         acceptAllDevices: true,
-                        optionalServices: [] // we'll discover all
+                        optionalServices: commonServices
                     });
                     deviceNameDisplay.textContent = device.name || 'Mustang Dyno';
                     log(`Selected: ${device.name || 'unnamed'}`, 'success');
@@ -957,8 +659,21 @@
                 } catch (err) {
                     log(`Connection error: ${err.message}`, 'error');
                     setStatus(false);
-                    if (err.message.includes('cancelled')) {
-                        log('Pairing cancelled by user', 'warn');
+                    // Retry once after short delay
+                    if (!err.message.includes('cancelled')) {
+                        log('Retrying in 1s…', 'warn');
+                        await new Promise(r => setTimeout(r, 1000));
+                        try {
+                            if (device && device.gatt) {
+                                gattServer = await device.gatt.connect();
+                                log('GATT connected on retry', 'success');
+                                setStatus(true);
+                                await discoverServices();
+                            }
+                        } catch (retryErr) {
+                            log(`Retry failed: ${retryErr.message}`, 'error');
+                            setStatus(false);
+                        }
                     }
                 }
                 isConnecting = false;
@@ -970,9 +685,7 @@
                     const svcs = await gattServer.getPrimaryServices();
                     services = svcs.map(s => ({ uuid: s.uuid, isPrimary: true, service: s }));
                     log(`Found ${services.length} primary services`, 'success');
-
                     for (const s of services) {
-                        const charMap = {};
                         const chars = await s.service.getCharacteristics();
                         const list = [];
                         for (const c of chars) {
@@ -983,16 +696,12 @@
                             if (c.properties.notify) props.push('notify');
                             if (c.properties.indicate) props.push('indicate');
                             list.push({ uuid: c.uuid, properties: props, characteristic: c });
-                            charMap[c.uuid] = c;
+                            characteristics[s.uuid] = list;
                         }
-                        characteristics[s.uuid] = list;
                     }
                     renderServices();
-                    log(`Discovered ${Object.values(characteristics).reduce((a,b) => a+b.length, 0)} characteristics total`, 'info');
-
-                    // Auto-read battery if available
+                    log(`Total characteristics: ${Object.values(characteristics).reduce((a,b) => a+b.length, 0)}`, 'info');
                     await tryReadBattery();
-
                 } catch (err) {
                     log(`Service discovery error: ${err.message}`, 'error');
                 }
@@ -1000,86 +709,43 @@
 
             async function tryReadBattery() {
                 try {
-                    // Look for battery service 0x180F
-                    const batterySvc = services.find(s => s.uuid.includes('180f') || s.uuid.includes('180F'));
-                    if (!batterySvc) {
-                        log('No battery service (0x180F) found', 'warn');
-                        return;
-                    }
+                    const batterySvc = services.find(s => s.uuid.toLowerCase().includes('180f'));
+                    if (!batterySvc) { log('No battery service (0x180F)', 'warn'); return; }
                     const chars = characteristics[batterySvc.uuid] || [];
-                    const battChar = chars.find(c => c.uuid.includes('2a19') || c.uuid.includes('2A19'));
-                    if (!battChar) {
-                        log('No battery characteristic (0x2A19) found', 'warn');
-                        return;
-                    }
+                    const battChar = chars.find(c => c.uuid.toLowerCase().includes('2a19'));
+                    if (!battChar) { log('No battery characteristic (0x2A19)', 'warn'); return; }
                     const val = await battChar.characteristic.readValue();
                     const bytes = new Uint8Array(val.buffer);
                     if (bytes.length >= 1) {
-                        const pct = bytes[0];
-                        updateBattery(pct);
-                        log(`Battery: ${pct}%`, 'success');
-                        // Subscribe to notifications if available
+                        updateBattery(bytes[0]);
+                        log(`Battery: ${bytes[0]}%`, 'success');
                         if (battChar.properties.includes('notify')) {
                             await battChar.characteristic.startNotifications();
                             battChar.characteristic.addEventListener('characteristicvaluechanged', (e) => {
                                 const v = new Uint8Array(e.target.value.buffer);
-                                if (v.length >= 1) {
-                                    updateBattery(v[0]);
-                                    log(`Battery updated: ${v[0]}%`, 'data');
-                                }
+                                if (v.length) { updateBattery(v[0]);
+                                    log(`Battery update: ${v[0]}%`, 'data'); }
                             });
-                            log('Battery notifications subscribed', 'info');
+                            log('Battery notifications active', 'info');
                         }
                     }
-                } catch (e) {
-                    log(`Battery read failed: ${e.message}`, 'warn');
-                }
+                } catch (e) { log(`Battery read failed: ${e.message}`, 'warn'); }
             }
 
             // ---- write helper ----
             async function writeToFeature(featureKey, hexBytes) {
-                if (!isConnected || !gattServer) {
-                    log('Not connected', 'error');
-                    return false;
-                }
+                if (!isConnected || !gattServer) { log('Not connected', 'error'); return false; }
                 const cfg = featureConfigs[featureKey];
-                if (!cfg || !cfg.service || !cfg.char) {
-                    log(`Feature "${featureKey}" not configured (set UUIDs first)`, 'warn');
-                    return false;
-                }
+                if (!cfg || !cfg.service || !cfg.char) { log(`Feature "${featureKey}" not configured`, 'warn'); return false; }
                 try {
                     const svc = await gattServer.getPrimaryService(cfg.service);
                     const char = await svc.getCharacteristic(cfg.char);
                     const bytes = hexBytes.trim().split(/\s+/).map(b => parseInt(b, 16));
-                    if (bytes.some(isNaN)) {
-                        log(`Invalid hex: ${hexBytes}`, 'error');
-                        return false;
-                    }
+                    if (bytes.some(isNaN)) { log(`Invalid hex: ${hexBytes}`, 'error'); return false; }
                     await char.writeValue(new Uint8Array(bytes));
-                    log(`Wrote to ${featureKey}: ${hexBytes}`, 'success', hexBytes);
+                    log(`Wrote ${featureKey}: ${hexBytes}`, 'success', hexBytes);
                     return true;
-                } catch (e) {
-                    log(`Write failed for ${featureKey}: ${e.message}`, 'error');
-                    return false;
-                }
-            }
-
-            async function readFromFeature(featureKey) {
-                if (!isConnected || !gattServer) return null;
-                const cfg = featureConfigs[featureKey];
-                if (!cfg || !cfg.service || !cfg.char) return null;
-                try {
-                    const svc = await gattServer.getPrimaryService(cfg.service);
-                    const char = await svc.getCharacteristic(cfg.char);
-                    const val = await char.readValue();
-                    const bytes = new Uint8Array(val.buffer);
-                    const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join(' ');
-                    log(`Read from ${featureKey}: ${hex}`, 'data', hex);
-                    return bytes;
-                } catch (e) {
-                    log(`Read failed for ${featureKey}: ${e.message}`, 'warn');
-                    return null;
-                }
+                } catch (e) { log(`Write failed for ${featureKey}: ${e.message}`, 'error'); return false; }
             }
 
             // ---- EQ ----
@@ -1089,21 +755,16 @@
                 slider.addEventListener('input', () => {
                     const val = parseInt(slider.value);
                     if (display) display.textContent = val;
-                    // Attempt live write if configured
                     const cfg = featureConfigs.eq;
                     if (cfg && cfg.service && cfg.char && cfg.cmd) {
-                        // Replace placeholder {val} with actual value
                         let cmd = cfg.cmd.replace(/\{val\}/g, val.toString());
-                        // If no placeholder, append value as single byte
-                        if (!cfg.cmd.includes('{val}')) {
-                            cmd = cmd.trim() + ' ' + val.toString(16).padStart(2, '0');
-                        }
+                        if (!cfg.cmd.includes('{val}')) cmd = cmd.trim() + ' ' + val.toString(16).padStart(2, '0');
                         writeToFeature('eq', cmd);
                     }
                 });
             });
 
-            // ---- Toggle helpers ----
+            // ---- Toggles ----
             function setupToggle(btn, labelEl, onLabel, offLabel, featureKey, onHex, offHex) {
                 let state = false;
                 btn.addEventListener('click', () => {
@@ -1111,76 +772,52 @@
                     btn.classList.toggle('active', state);
                     labelEl.textContent = state ? onLabel : offLabel;
                     const hex = state ? onHex : offHex;
-                    if (featureKey && hex) {
-                        writeToFeature(featureKey, hex);
-                    }
+                    if (featureKey && hex) writeToFeature(featureKey, hex);
                 });
                 return { getState: () => state, setState: (s) => { state = s;
                         btn.classList.toggle('active', s);
                         labelEl.textContent = s ? onLabel : offLabel; } };
             }
-
-            const modeToggle = setupToggle(modeToggleBtn, modeLabel, 'Gaming', 'Music', 'mode', '01', '00');
-            const ancToggle = setupToggle(ancToggleBtn, ancLabel, 'On', 'Off', 'anc', '01', '00');
-            const dualToggle = setupToggle(dualToggleBtn, dualLabel, 'On', 'Off', 'dual', '01', '00');
+            setupToggle(modeToggleBtn, modeLabel, 'Gaming', 'Music', 'mode', '01', '00');
+            setupToggle(ancToggleBtn, ancLabel, 'On', 'Off', 'anc', '01', '00');
+            setupToggle(dualToggleBtn, dualLabel, 'On', 'Off', 'dual', '01', '00');
 
             // ---- Buttons ----
             cleanupBtn.addEventListener('click', () => {
                 const cfg = featureConfigs.cleanup;
-                if (cfg && cfg.service && cfg.char && cfg.cmd) {
-                    writeToFeature('cleanup', cfg.cmd);
-                } else {
-                    log('Cleanup not configured — set UUID/command in ⚙', 'warn');
-                }
+                if (cfg && cfg.service && cfg.char && cfg.cmd) writeToFeature('cleanup', cfg.cmd);
+                else log('Cleanup not configured', 'warn');
             });
-
             findBtn.addEventListener('click', () => {
                 const cfg = featureConfigs.find;
-                if (cfg && cfg.service && cfg.char && cfg.cmd) {
-                    writeToFeature('find', cfg.cmd);
-                } else {
-                    log('Find My Buds not configured — set UUID/command in ⚙', 'warn');
-                }
+                if (cfg && cfg.service && cfg.char && cfg.cmd) writeToFeature('find', cfg.cmd);
+                else log('Find not configured', 'warn');
             });
-
             renameBtn.addEventListener('click', async () => {
                 const name = renameInput.value.trim();
                 if (!name) { log('Enter a name', 'warn'); return; }
                 const cfg = featureConfigs.rename;
                 if (cfg && cfg.service && cfg.char && cfg.cmd) {
-                    // Encode name as hex bytes (ASCII)
                     const bytes = [...new TextEncoder().encode(name)].map(b => b.toString(16).padStart(2, '0')).join(' ');
                     let cmd = cfg.cmd.replace(/\{name\}/g, bytes);
-                    if (!cfg.cmd.includes('{name}')) {
-                        cmd = cmd.trim() + ' ' + bytes;
-                    }
+                    if (!cfg.cmd.includes('{name}')) cmd = cmd.trim() + ' ' + bytes;
                     await writeToFeature('rename', cmd);
-                } else {
-                    log('Rename not configured — set UUID/command in ⚙', 'warn');
-                }
+                } else log('Rename not configured', 'warn');
             });
-
             gestureApplyBtn.addEventListener('click', () => {
                 const cfg = featureConfigs.gesture;
                 if (cfg && cfg.service && cfg.char && cfg.cmd) {
-                    // Use configured command, optionally with placeholder
                     let cmd = cfg.cmd;
-                    // Try to read selected values and inject them
-                    const leftTaps = document.querySelectorAll('#gestureCard select');
-                    if (leftTaps.length >= 4) {
-                        const val1 = leftTaps[0].selectedIndex;
-                        const val2 = leftTaps[1].selectedIndex;
-                        const val3 = leftTaps[2].selectedIndex;
-                        const val4 = leftTaps[3].selectedIndex;
-                        cmd = cmd.replace(/\{l1\}/g, val1.toString())
-                            .replace(/\{l2\}/g, val2.toString())
-                            .replace(/\{r1\}/g, val3.toString())
-                            .replace(/\{r2\}/g, val4.toString());
+                    const selects = document.querySelectorAll('#gestureCard select');
+                    if (selects.length >= 4) {
+                        const vals = [selects[0].selectedIndex, selects[1].selectedIndex, selects[2].selectedIndex, selects[3]
+                            .selectedIndex
+                        ];
+                        cmd = cmd.replace(/\{l1\}/g, vals[0]).replace(/\{l2\}/g, vals[1])
+                            .replace(/\{r1\}/g, vals[2]).replace(/\{r2\}/g, vals[3]);
                     }
                     writeToFeature('gesture', cmd);
-                } else {
-                    log('Gestures not configured — set UUID/command in ⚙', 'warn');
-                }
+                } else log('Gestures not configured', 'warn');
             });
 
             // ---- Config overlay ----
@@ -1198,32 +835,20 @@
                     configOverlay.classList.add('open');
                 });
             });
-
-            function closeConfig() {
-                configOverlay.classList.remove('open');
-                activeConfigFeature = null;
-            }
-
+            const closeConfig = () => { configOverlay.classList.remove('open');
+                activeConfigFeature = null; };
             configCloseBtn.addEventListener('click', closeConfig);
             configCancelBtn.addEventListener('click', closeConfig);
-            configOverlay.addEventListener('click', (e) => {
-                if (e.target === configOverlay) closeConfig();
-            });
-
+            configOverlay.addEventListener('click', (e) => { if (e.target === configOverlay) closeConfig(); });
             configSaveBtn.addEventListener('click', () => {
                 if (!activeConfigFeature) return;
                 const svc = configServiceUuid.value.trim();
                 const chr = configCharUuid.value.trim();
                 const cmd = configCommandHex.value.trim();
-                if (!svc || !chr) {
-                    log('Service and Characteristic UUIDs required', 'warn');
-                    return;
-                }
+                if (!svc || !chr) { log('Service & Char required', 'warn'); return; }
                 featureConfigs[activeConfigFeature] = { service: svc, char: chr, cmd: cmd };
-                log(`Configured "${activeConfigFeature}": ${svc} / ${chr}`, 'success');
+                log(`Configured "${activeConfigFeature}"`, 'success');
                 closeConfig();
-
-                // If feature is EQ, re-apply current slider values
                 if (activeConfigFeature === 'eq') {
                     eqSliders.forEach(slider => {
                         const val = parseInt(slider.value);
@@ -1232,9 +857,7 @@
                         if (display) display.textContent = val;
                         if (cmd) {
                             let c = cmd.replace(/\{val\}/g, val.toString());
-                            if (!cmd.includes('{val}')) {
-                                c = c.trim() + ' ' + val.toString(16).padStart(2, '0');
-                            }
+                            if (!cmd.includes('{val}')) c = c.trim() + ' ' + val.toString(16).padStart(2, '0');
                             writeToFeature('eq', c);
                         }
                     });
@@ -1243,13 +866,10 @@
 
             // ---- Raw GATT ----
             rawWriteBtn.addEventListener('click', async () => {
-                const svc = rawServiceUuid.value.trim();
-                const chr = rawCharUuid.value.trim();
-                const hex = rawCommandHex.value.trim();
-                if (!svc || !chr || !hex) {
-                    rawResult.textContent = '❌ Fill in all fields';
-                    return;
-                }
+                const svc = rawServiceUuid.value.trim(),
+                    chr = rawCharUuid.value.trim(),
+                    hex = rawCommandHex.value.trim();
+                if (!svc || !chr || !hex) { rawResult.textContent = '❌ Fill all fields'; return; }
                 if (!isConnected) { rawResult.textContent = '❌ Not connected'; return; }
                 try {
                     const service = await gattServer.getPrimaryService(svc);
@@ -1258,17 +878,14 @@
                     if (bytes.some(isNaN)) { rawResult.textContent = '❌ Invalid hex'; return; }
                     await char.writeValue(new Uint8Array(bytes));
                     rawResult.textContent = `✅ Wrote: ${hex}`;
-                    log(`Raw write: ${hex} → ${svc}/${chr}`, 'data', hex);
-                } catch (e) {
-                    rawResult.textContent = `❌ ${e.message}`;
-                    log(`Raw write error: ${e.message}`, 'error');
-                }
+                    log(`Raw write: ${hex}`, 'data', hex);
+                } catch (e) { rawResult.textContent = `❌ ${e.message}`;
+                    log(`Raw write error: ${e.message}`, 'error'); }
             });
-
             rawReadBtn.addEventListener('click', async () => {
-                const svc = rawServiceUuid.value.trim();
-                const chr = rawCharUuid.value.trim();
-                if (!svc || !chr) { rawResult.textContent = '❌ Fill in Service & Char UUIDs'; return; }
+                const svc = rawServiceUuid.value.trim(),
+                    chr = rawCharUuid.value.trim();
+                if (!svc || !chr) { rawResult.textContent = '❌ Fill Service & Char'; return; }
                 if (!isConnected) { rawResult.textContent = '❌ Not connected'; return; }
                 try {
                     const service = await gattServer.getPrimaryService(svc);
@@ -1278,64 +895,28 @@
                     const hex = [...bytes].map(b => b.toString(16).padStart(2, '0')).join(' ');
                     rawResult.textContent = `📖 ${hex}`;
                     log(`Raw read: ${hex}`, 'data', hex);
-                } catch (e) {
-                    rawResult.textContent = `❌ ${e.message}`;
-                    log(`Raw read error: ${e.message}`, 'error');
-                }
+                } catch (e) { rawResult.textContent = `❌ ${e.message}`;
+                    log(`Raw read error: ${e.message}`, 'error'); }
             });
 
-            // ---- Refresh services ----
-            refreshServicesBtn.addEventListener('click', async () => {
-                if (!isConnected) { log('Not connected', 'warn'); return; }
-                await discoverServices();
-            });
-
-            // ---- Clear log ----
-            clearLogBtn.addEventListener('click', () => {
-                logContainer.innerHTML = '';
+            // ---- Misc ----
+            refreshServicesBtn.addEventListener('click', async () => { if (isConnected) await discoverServices(); else log(
+                    'Not connected', 'warn'); });
+            clearLogBtn.addEventListener('click', () => { logContainer.innerHTML = '';
                 logCount = 0;
-                log('Log cleared', 'info');
-            });
-
-            // ---- Theme toggle ----
-            themeToggleBtn.addEventListener('click', () => {
-                document.documentElement.classList.toggle('dark');
-            });
-
-            // ---- Connect button ----
+                log('Log cleared', 'info'); });
+            themeToggleBtn.addEventListener('click', () => document.documentElement.classList.toggle('dark'));
             connectBtn.addEventListener('click', connect);
-
-            // ---- Device disconnect event ----
-            if (navigator.bluetooth) {
-                // We'll handle disconnect via the connect() toggle logic
-            }
 
             // ---- Init ----
             setStatus(false);
-            log('Dyno Controller ready. Tap Connect to pair.', 'info');
+            log('Dyno Controller ready. Tap Connect.', 'info');
 
-            // If battery service is missing, show a placeholder
-            setTimeout(() => {
-                if (!isConnected) {
-                    batteryDisplay.textContent = '--%';
-                }
-            }, 500);
+            // Keyboard shortcut
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfig(); });
 
-            // Keyboard shortcut: Escape to close config
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') closeConfig();
-            });
-
-            console.log('🟣 Dyno Controller · Liquid Glass UI');
-            console.log('📡 Web Bluetooth ready — click Connect to pair your Mustang Dyno earbuds.');
-            console.log('⚙️  Each feature card has a ⚙ button to configure UUIDs & commands.');
-            console.log('🔍 Use the Advanced GATT Explorer for raw read/write testing.');
-
-            // ---- Auto-connect from URL param? (optional) ----
-            // if (new URLSearchParams(location.search).get('auto') === '1') {
-            //   setTimeout(connect, 800);
-            // }
-
+            console.log('🟣 Dyno Controller · Glass UI');
+            console.log('🔗 If connection fails, close GoBoult app and retry.');
         })();
     </script>
 
