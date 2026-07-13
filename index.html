@@ -406,6 +406,20 @@
         }
         .config-overlay.open { display: flex; }
 
+        /* Assign overlay */
+        .assign-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 20px;
+        }
+        .assign-overlay.open { display: flex; }
+
         /* Log lines */
         .log-line {
             font-family: 'SF Mono', monospace;
@@ -465,6 +479,28 @@
                     <button id="configSaveBtn" class="flex-1 py-3 rounded-xl bg-accent text-white font-bold glass-btn shadow-lg">Save &amp; Test</button>
                     <button id="configCancelBtn" class="flex-1 py-3 rounded-xl glass-hover font-semibold glass-btn border border-sep">Cancel</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assign Overlay -->
+    <div id="assignOverlay" class="assign-overlay">
+        <div class="glass-card max-w-md w-full" style="background: var(--card-bg); backdrop-filter: blur(40px);">
+            <h3 class="text-lg font-bold mb-3">Assign to Feature</h3>
+            <p class="text-sm text-muted mb-3">Select which feature this characteristic controls:</p>
+            <select id="assignFeatureSelect" class="w-full glass-card rounded-xl px-4 py-3 text-sm font-medium bg-transparent border border-sep mb-4">
+                <option value="eq">EQ</option>
+                <option value="mode">Mode Switch</option>
+                <option value="cleanup">Quick Cleanup</option>
+                <option value="find">Find My Buds</option>
+                <option value="rename">Rename</option>
+                <option value="gesture">Gesture Mapping</option>
+                <option value="anc">ANC Toggle</option>
+                <option value="dual">Dual Pairing</option>
+            </select>
+            <div class="flex gap-3">
+                <button id="assignConfirmBtn" class="flex-1 py-3 rounded-xl bg-accent text-white font-bold glass-btn">Assign</button>
+                <button id="assignCancelBtn" class="flex-1 py-3 rounded-xl glass-hover font-semibold glass-btn border border-sep">Cancel</button>
             </div>
         </div>
     </div>
@@ -713,6 +749,13 @@
             const configCommandHex = $('#configCommandHex');
             const configTriggers = $$('.config-trigger');
 
+            // Assign overlay
+            const assignOverlay = $('#assignOverlay');
+            const assignFeatureSelect = $('#assignFeatureSelect');
+            const assignConfirmBtn = $('#assignConfirmBtn');
+            const assignCancelBtn = $('#assignCancelBtn');
+            let pendingAssign = null; // will hold { serviceUuid, charUuid }
+
             // Other UI
             const connectBtn = $('#connectBtn');
             const connectBtnText = $('#connectBtnText');
@@ -839,11 +882,23 @@
                                     <div class="pl-3 text-muted flex items-center gap-2 text-[10px]">
                                         <span>${c.uuid}</span>
                                         ${c.properties.map(p => `<span class="text-[8px] bg-sep/30 px-1.5 py-0.5 rounded">${p}</span>`).join('')}
+                                        <button class="assign-btn text-[9px] bg-accent/10 px-2 py-0.5 rounded-full hover:bg-accent/20 transition-colors" data-service="${svc.uuid}" data-char="${c.uuid}">Assign</button>
                                     </div>
                                 `).join('') : '<div class="pl-3 text-muted text-[10px] italic">No characteristics</div>'}
                             </div>`;
                 }
                 servicesList.innerHTML = html;
+
+                // Attach assign button listeners
+                document.querySelectorAll('.assign-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const serviceUuid = btn.dataset.service;
+                        const charUuid = btn.dataset.char;
+                        pendingAssign = { serviceUuid, charUuid };
+                        assignOverlay.classList.add('open');
+                    });
+                });
             }
 
             // ---- Navigation & Theme ----
@@ -851,7 +906,7 @@
                 if (!btn) return;
                 if (!smooth) activePill.style.transition = 'none';
                 else activePill.style.transition =
-                'transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), background 0.5s ease, box-shadow 0.5s ease';
+                    'transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), background 0.5s ease, box-shadow 0.5s ease';
                 activePill.style.width = `${btn.offsetWidth}px`;
                 activePill.style.transform = `translateX(${btn.offsetLeft}px)`;
                 if (!smooth) setTimeout(() => activePill.style.transition = '', 50);
@@ -883,14 +938,12 @@
                 }, 100);
             });
 
-            // Glare
             nav.addEventListener('mousemove', (e) => {
                 const rect = nav.getBoundingClientRect();
                 glare.style.setProperty('--x', `${e.clientX - rect.left}px`);
                 glare.style.setProperty('--y', `${e.clientY - rect.top}px`);
             });
 
-            // Init pill
             setTimeout(() => {
                 const initial = document.querySelector('.nav-btn.active');
                 if (initial) updatePill(initial, false);
@@ -1105,6 +1158,25 @@
             quickMode.addEventListener('click', () => { modeToggleBtn.click(); });
             quickANC.addEventListener('click', () => { ancToggleBtn.click(); });
 
+            // ---- Assign overlay ----
+            assignCancelBtn.addEventListener('click', () => {
+                assignOverlay.classList.remove('open');
+                pendingAssign = null;
+            });
+            assignConfirmBtn.addEventListener('click', () => {
+                if (!pendingAssign) return;
+                const feature = assignFeatureSelect.value;
+                const cfg = featureConfigs[feature];
+                if (cfg) {
+                    cfg.service = pendingAssign.serviceUuid;
+                    cfg.char = pendingAssign.charUuid;
+                    // Leave cmd as is (already set or empty)
+                    log(`Assigned ${feature} to ${pendingAssign.serviceUuid} / ${pendingAssign.charUuid}`, 'success');
+                }
+                assignOverlay.classList.remove('open');
+                pendingAssign = null;
+            });
+
             // ---- Config overlay ----
             configTriggers.forEach(btn => {
                 btn.addEventListener('click', (e) => {
@@ -1196,9 +1268,10 @@
             setStatus(false);
             log('Dyno Controller ready. Tap Connect.', 'info');
 
-            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfig(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeConfig();
+                    assignOverlay.classList.remove('open'); } });
 
-            console.log('🟣 Dyno Controller · Liquid Glass UI');
+            console.log('🟣 Dyno Controller · Liquid Glass UI with Auto-Assign');
             console.log('🔗 If connection fails, close GoBoult app and retry.');
         })();
     </script>
