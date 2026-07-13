@@ -1,123 +1,312 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dyno · Controller</title>
+    <title>Dyno · Liquid Controller</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4">
     </script>
     <script src="https://unpkg.com/@phosphor-icons/web">
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        /* =========================================
+           1. APPLE THEME VARIABLEN
+           ========================================= */
         :root {
-            --theme-bg: #f2f2f7;
-            --theme-text: #1c1c1e;
-            --theme-text-muted: rgba(28, 28, 30, 0.5);
-            --glass-bg: rgba(255, 255, 255, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.7);
-            --glass-shadow: rgba(0, 0, 0, 0.06);
-            --glass-inset: rgba(255, 255, 255, 0.8);
-            --glass-hover: rgba(0, 0, 0, 0.04);
+            --bg-color: #e5e5ea;
+            --blob-1: #ff2a5f;
+            --blob-2: #007aff;
+            --blob-3: #ff9500;
+            --blob-opacity: 0.7;
+
+            --glass-bg: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-shadow: rgba(0, 0, 0, 0.1);
+            --glass-highlight: rgba(255, 255, 255, 0.8);
+            --glass-caustic: rgba(255, 255, 255, 0.4);
+            --reflection-start: rgba(255, 255, 255, 0.6);
+            --reflection-end: rgba(255, 255, 255, 0.0);
+            --glare-color: rgba(255, 255, 255, 0.5);
+
+            --pill-bg: rgba(255, 255, 255, 0.7);
+            --pill-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.05), inset 0 1px 1px rgba(255,255,255,0.8);
+            --icon-color: rgba(0, 0, 0, 0.5);
+            --icon-active: rgba(0, 0, 0, 0.95);
+            --divider: rgba(0, 0, 0, 0.15);
+
+            --card-bg: rgba(255, 255, 255, 0.25);
+            --card-border: rgba(255, 255, 255, 0.35);
+            --text-primary: #1c1c1e;
+            --text-secondary: rgba(28, 28, 30, 0.6);
             --separator: rgba(60, 60, 67, 0.08);
-            --widget-fill: rgba(255, 255, 255, 0.85);
             --accent: #007aff;
-            --accent-glow: rgba(0, 122, 255, 0.2);
-            --danger: #ff3b30;
             --success: #34c759;
+            --danger: #ff3b30;
             --warning: #ff9500;
         }
-        .dark {
-            --theme-bg: #000000;
-            --theme-text: #ffffff;
-            --theme-text-muted: rgba(255, 255, 255, 0.5);
-            --glass-bg: rgba(28, 28, 30, 0.45);
-            --glass-border: rgba(255, 255, 255, 0.12);
-            --glass-shadow: rgba(0, 0, 0, 0.4);
-            --glass-inset: rgba(255, 255, 255, 0.06);
-            --glass-hover: rgba(255, 255, 255, 0.08);
+
+        [data-theme="dark"] {
+            --bg-color: #000000;
+            --blob-1: #bf5af2;
+            --blob-2: #0a84ff;
+            --blob-3: #ff375f;
+            --blob-opacity: 0.5;
+
+            --glass-bg: rgba(30, 30, 35, 0.45);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --glass-shadow: rgba(0, 0, 0, 0.8);
+            --glass-highlight: rgba(255, 255, 255, 0.25);
+            --glass-caustic: rgba(255, 255, 255, 0.05);
+            --reflection-start: rgba(255, 255, 255, 0.15);
+            --reflection-end: rgba(255, 255, 255, 0.0);
+            --glare-color: rgba(255, 255, 255, 0.15);
+
+            --pill-bg: rgba(60, 60, 65, 0.8);
+            --pill-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.2);
+            --icon-color: rgba(255, 255, 255, 0.5);
+            --icon-active: #ffffff;
+            --divider: rgba(255, 255, 255, 0.15);
+
+            --card-bg: rgba(28, 28, 30, 0.5);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
             --separator: rgba(255, 255, 255, 0.08);
-            --widget-fill: rgba(255, 255, 255, 0.8);
             --accent: #0a84ff;
-            --accent-glow: rgba(10, 132, 255, 0.2);
         }
+
+        /* =========================================
+           2. GLOBAL
+           ========================================= */
         * {
-            -webkit-tap-highlight-color: transparent;
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
         }
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--theme-bg);
-            color: var(--theme-text);
-            background-image: radial-gradient(circle at 20% 30%, rgba(0, 122, 255, 0.08), transparent 40%),
-                radial-gradient(circle at 80% 70%, rgba(175, 82, 222, 0.08), transparent 40%);
-            background-size: cover;
-            background-attachment: fixed;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
             min-height: 100vh;
-            transition: background-color 0.4s, color 0.4s;
-            padding: 16px;
-            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            transition: background 0.6s ease, color 0.6s ease;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
-        .glass-panel {
+
+        /* Mesh Hintergrund */
+        .bg-mesh {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background: var(--bg-color);
+            transition: background 0.8s ease;
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: var(--blob-opacity);
+            animation: float 20s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+            will-change: transform;
+            transition: background 0.8s ease, opacity 0.8s ease;
+        }
+        .blob-1 { width: 50vw; height: 50vw; top: -10%; left: -10%; background: var(--blob-1); animation-delay: 0s; }
+        .blob-2 { width: 45vw; height: 45vw; bottom: -10%; right: -10%; background: var(--blob-2); animation-delay: -5s; }
+        .blob-3 { width: 35vw; height: 35vw; top: 30%; left: 40%; background: var(--blob-3); animation-delay: -10s; }
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
+            33% { transform: translate(5%, 10%) scale(1.05) rotate(5deg); }
+            66% { transform: translate(-5%, 5%) scale(0.95) rotate(-5deg); }
+            100% { transform: translate(0, -10%) scale(1.1) rotate(0deg); }
+        }
+
+        /* =========================================
+           3. LIQUID GLASS COMPONENTS
+           ========================================= */
+        .liquid-nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 99px;
             background: var(--glass-bg);
-            backdrop-filter: blur(24px) saturate(1.2);
-            -webkit-backdrop-filter: blur(24px) saturate(1.2);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 12px 40px -8px var(--glass-shadow), inset 0 0.5px 1px var(--glass-inset);
+            backdrop-filter: blur(50px) saturate(200%);
+            -webkit-backdrop-filter: blur(50px) saturate(200%);
+            box-shadow: 
+                0 40px 80px -20px var(--glass-shadow),
+                0 10px 30px -10px var(--glass-shadow),
+                inset 0 2px 3px -1px var(--glass-highlight),
+                inset 0 -2px 4px -1px var(--glass-caustic),
+                inset 0 0 0 1px var(--glass-border);
+            transition: all 0.5s ease;
+            z-index: 10;
+            margin-bottom: 20px;
+            width: 100%;
+            max-width: 640px;
+        }
+        .liquid-nav::before {
+            content: '';
+            position: absolute;
+            top: 1px; left: 1px; right: 1px; height: 46%;
+            border-radius: 99px 99px 24px 24px / 99px 99px 12px 12px;
+            background: linear-gradient(180deg, var(--reflection-start) 0%, var(--reflection-end) 100%);
+            pointer-events: none;
+            z-index: 6;
+            transition: background 0.5s ease;
+        }
+        .liquid-glare-container {
+            position: absolute;
+            inset: 0;
+            border-radius: 99px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 5;
+        }
+        .liquid-glare {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            background: radial-gradient(circle 90px at var(--x, 50%) var(--y, 50%), var(--glare-color) 0%, transparent 100%);
+            mix-blend-mode: overlay;
+        }
+        .liquid-nav:hover .liquid-glare { opacity: 1; }
+
+        .nav-items {
+            position: relative;
+            display: flex;
+            gap: 4px;
+            z-index: 3;
+            flex: 1;
+        }
+        .active-pill {
+            position: absolute;
+            top: 0; left: 0;
+            height: 40px;
+            background: var(--pill-bg);
+            border-radius: 99px;
+            box-shadow: var(--pill-shadow);
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), 
+                        width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1),
+                        background 0.5s ease, box-shadow 0.5s ease;
+            z-index: 1;
+        }
+        .nav-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            padding: 0 16px;
+            height: 40px;
+            border-radius: 99px;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--icon-color);
+            cursor: pointer;
+            transition: color 0.3s ease;
+            outline: none;
+            z-index: 2;
+            white-space: nowrap;
+        }
+        .btn-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .nav-btn:active .btn-content { transform: scale(0.92); }
+        .nav-btn.active { color: var(--icon-active); }
+        .nav-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        .divider {
+            width: 1px;
+            height: 24px;
+            background: var(--divider);
+            margin: 0 4px;
+            z-index: 3;
+            transition: background 0.5s ease;
+        }
+        .theme-btn {
+            position: relative;
+            background: transparent;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: var(--icon-color);
+            cursor: pointer;
+            z-index: 3;
+            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.3s ease;
+        }
+        .theme-btn:hover, .theme-btn:active { color: var(--icon-active); }
+        .theme-icon-wrapper {
+            position: relative;
+            width: 18px;
+            height: 18px;
+            pointer-events: none;
+            transition: transform 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+        }
+        .theme-btn:active .theme-icon-wrapper { transform: scale(0.8); }
+        .theme-icon-wrapper svg {
+            position: absolute;
+            top: 0; left: 0;
+            transition: transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), opacity 0.4s ease;
+            stroke-width: 2.2;
+        }
+        .sun { opacity: 1; transform: rotate(0deg) scale(1); }
+        .moon { opacity: 0; transform: rotate(-90deg) scale(0); }
+        [data-theme="dark"] .sun { opacity: 0; transform: rotate(90deg) scale(0); }
+        [data-theme="dark"] .moon { opacity: 1; transform: rotate(0deg) scale(1); }
+
+        /* Liquid Glass Cards */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--card-border);
+            box-shadow: 
+                0 20px 40px -12px var(--glass-shadow),
+                inset 0 1px 1px var(--glass-highlight);
+            border-radius: 2rem;
+            padding: 1.25rem;
             transition: background 0.4s, border 0.4s, box-shadow 0.4s;
         }
-        .glass-btn {
-            transition: all 0.18s ease;
-            cursor: pointer;
-            user-select: none;
-        }
-        .glass-btn:active {
-            transform: scale(0.96);
-            opacity: 0.7;
-        }
-        .glass-hover:hover {
+
+        /* Tabs content */
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Misc */
+        .text-muted { color: var(--text-secondary); }
+        .border-sep { border-color: var(--separator); }
+        .bg-sep { background: var(--separator); }
+        .badge {
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 10px;
+            border-radius: 20px;
             background: var(--glass-hover);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
         }
-        .border-sep {
-            border-color: var(--separator);
+        .badge-live {
+            background: rgba(52, 199, 89, 0.12);
+            color: var(--success);
+            border-color: rgba(52, 199, 89, 0.2);
         }
-        .text-muted {
-            color: var(--theme-text-muted);
-        }
-        .bg-sep {
-            background: var(--separator);
-        }
-
-        /* toggles */
-        .toggle-track {
-            width: 44px;
-            height: 26px;
-            border-radius: 13px;
-            background: var(--separator);
-            position: relative;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: background 0.25s;
-        }
-        .toggle-track.active {
-            background: var(--accent);
-        }
-        .toggle-thumb {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: white;
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-        }
-        .toggle-track.active .toggle-thumb {
-            transform: translateX(18px);
-        }
-
-        /* pulse dot */
         .pulse {
             width: 10px;
             height: 10px;
@@ -125,32 +314,15 @@
             display: inline-block;
             flex-shrink: 0;
         }
-        .pulse.on {
-            background: var(--success);
-            box-shadow: 0 0 12px rgba(52, 199, 89, 0.4);
-            animation: pulse 2s infinite;
-        }
-        .pulse.off {
-            background: var(--danger);
-            box-shadow: 0 0 12px rgba(255, 59, 48, 0.2);
-        }
-        .pulse.pending {
-            background: var(--warning);
-            animation: pulse 1s infinite;
-        }
+        .pulse.on { background: var(--success); box-shadow: 0 0 12px rgba(52,199,89,0.4); animation: pulse 2s infinite; }
+        .pulse.off { background: var(--danger); box-shadow: 0 0 12px rgba(255,59,48,0.2); }
+        .pulse.pending { background: var(--warning); animation: pulse 1s infinite; }
         @keyframes pulse {
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            50% {
-                opacity: 0.6;
-                transform: scale(0.85);
-            }
+            0%,100%{ opacity:1; transform:scale(1); }
+            50%{ opacity:0.6; transform:scale(0.85); }
         }
 
-        /* range */
+        /* Range sliders */
         input[type="range"] {
             -webkit-appearance: none;
             appearance: none;
@@ -171,8 +343,8 @@
             height: 18px;
             border-radius: 50%;
             background: var(--accent);
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 0 16px var(--accent-glow);
+            border: 2px solid var(--card-border);
+            box-shadow: 0 0 16px rgba(0,122,255,0.2);
         }
         input[type="range"]::-moz-range-track {
             height: 3px;
@@ -184,20 +356,43 @@
             height: 18px;
             border-radius: 50%;
             background: var(--accent);
-            border: 2px solid var(--glass-border);
-            box-shadow: 0 0 16px var(--accent-glow);
+            border: 2px solid var(--card-border);
+            box-shadow: 0 0 16px rgba(0,122,255,0.2);
         }
 
-        /* scroll */
+        /* Toggle switch */
+        .toggle-track {
+            width: 44px;
+            height: 26px;
+            border-radius: 13px;
+            background: var(--separator);
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: background 0.25s;
+        }
+        .toggle-track.active { background: var(--accent); }
+        .toggle-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: white;
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        .toggle-track.active .toggle-thumb { transform: translateX(18px); }
+
+        /* Scrollable */
         .scrollable {
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
-        .scrollable::-webkit-scrollbar {
-            display: none;
-        }
+        .scrollable::-webkit-scrollbar { display: none; }
 
-        /* config overlay */
+        /* Config overlay */
         .config-overlay {
             position: fixed;
             inset: 0;
@@ -209,10 +404,9 @@
             z-index: 1000;
             padding: 20px;
         }
-        .config-overlay.open {
-            display: flex;
-        }
+        .config-overlay.open { display: flex; }
 
+        /* Log lines */
         .log-line {
             font-family: 'SF Mono', monospace;
             font-size: 10px;
@@ -227,63 +421,46 @@
             font-size: 8px;
             margin-right: 4px;
         }
-        .log-line .tag.info {
-            background: rgba(0, 122, 255, 0.15);
-            color: var(--accent);
-        }
-        .log-line .tag.success {
-            background: rgba(52, 199, 89, 0.15);
-            color: var(--success);
-        }
-        .log-line .tag.error {
-            background: rgba(255, 59, 48, 0.15);
-            color: var(--danger);
-        }
-        .log-line .tag.warn {
-            background: rgba(255, 149, 0, 0.15);
-            color: var(--warning);
-        }
-        .log-line .tag.data {
-            background: rgba(175, 82, 222, 0.15);
-            color: #af52de;
-        }
-        .badge {
-            font-size: 9px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 2px 10px;
-            border-radius: 20px;
-            background: var(--glass-hover);
-            border: 1px solid var(--glass-border);
-            color: var(--theme-text-muted);
-        }
-        .badge-live {
-            background: rgba(52, 199, 89, 0.12);
-            color: var(--success);
-            border-color: rgba(52, 199, 89, 0.2);
-        }
+        .log-line .tag.info { background: rgba(0,122,255,0.15); color: var(--accent); }
+        .log-line .tag.success { background: rgba(52,199,89,0.15); color: var(--success); }
+        .log-line .tag.error { background: rgba(255,59,48,0.15); color: var(--danger); }
+        .log-line .tag.warn { background: rgba(255,149,0,0.15); color: var(--warning); }
+        .log-line .tag.data { background: rgba(175,82,222,0.15); color: #af52de; }
 
+        /* Responsive */
         @media (max-width: 640px) {
-            body {
-                padding: 12px;
-            }
+            body { padding: 8px; }
+            .nav-btn { font-size: 12px; padding: 0 10px; }
+            .nav-btn svg { width: 16px; height: 16px; }
+            .glass-card { padding: 1rem; border-radius: 1.5rem; }
+        }
+        @media (max-width: 480px) {
+            .nav-btn span { display: none; }
+            .nav-btn { padding: 0 14px; }
         }
     </style>
 </head>
 <body>
+
+    <!-- Mesh Background -->
+    <div class="bg-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
     <!-- Config Overlay -->
     <div id="configOverlay" class="config-overlay">
-        <div class="glass-panel rounded-[2.5rem] p-6 max-w-lg w-full max-h-[90vh] overflow-y-auto scrollable">
-            <div class="flex justify-between items-center mb-5">
+        <div class="glass-card max-w-lg w-full max-h-[90vh] overflow-y-auto scrollable" style="background: var(--card-bg); backdrop-filter: blur(40px);">
+            <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold">⚙️ Configure</h3>
                 <button id="configCloseBtn" class="w-10 h-10 rounded-full glass-hover flex items-center justify-center glass-btn text-2xl"><i class="ph ph-x"></i></button>
             </div>
             <div class="space-y-4">
-                <div><label class="text-sm font-semibold text-muted block mb-1">Feature</label><input id="configFeatureName" type="text" class="w-full glass-panel rounded-xl px-4 py-3 text-[16px] font-medium bg-transparent border border-sep" readonly /></div>
-                <div><label class="text-sm font-semibold text-muted block mb-1">Service UUID</label><input id="configServiceUuid" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
-                <div><label class="text-sm font-semibold text-muted block mb-1">Characteristic UUID</label><input id="configCharUuid" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
-                <div><label class="text-sm font-semibold text-muted block mb-1">Command Hex (e.g. 01 02 {val})</label><input id="configCommandHex" type="text" class="w-full glass-panel rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="01 02" /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Feature</label><input id="configFeatureName" type="text" class="w-full glass-card rounded-xl px-4 py-3 text-[16px] font-medium bg-transparent border border-sep" readonly /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Service UUID</label><input id="configServiceUuid" type="text" class="w-full glass-card rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Characteristic UUID</label><input id="configCharUuid" type="text" class="w-full glass-card rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="0000xxxx-..." /></div>
+                <div><label class="text-sm font-semibold text-muted block mb-1">Command Hex (e.g. 01 02 {val})</label><input id="configCommandHex" type="text" class="w-full glass-card rounded-xl px-4 py-3 font-mono text-sm bg-transparent border border-sep" placeholder="01 02" /></div>
                 <div class="flex gap-3 pt-2">
                     <button id="configSaveBtn" class="flex-1 py-3 rounded-xl bg-accent text-white font-bold glass-btn shadow-lg">Save &amp; Test</button>
                     <button id="configCancelBtn" class="flex-1 py-3 rounded-xl glass-hover font-semibold glass-btn border border-sep">Cancel</button>
@@ -292,198 +469,251 @@
         </div>
     </div>
 
-    <!-- Header -->
-    <header class="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-            <h1 class="text-2xl font-extrabold tracking-tight flex items-center gap-2">
-                <span class="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">Dyno</span>
-                <span class="text-muted text-xl font-light">·</span>
-                <span class="text-xl font-semibold">Controller</span>
-            </h1>
-            <div class="flex items-center gap-3 text-sm font-medium text-muted">
-                <span id="deviceNameDisplay">Mustang Dyno</span>
-                <span class="w-1 h-1 rounded-full bg-sep"></span>
-                <span id="connectionStatusText">disconnected</span>
+    <!-- Liquid Navigation -->
+    <nav class="liquid-nav" id="nav">
+        <div class="liquid-glare-container"><div class="liquid-glare" id="glare"></div></div>
+        <div class="nav-items" id="navItems">
+            <div class="active-pill" id="activePill"></div>
+            <button class="nav-btn active" data-tab="home">
+                <div class="btn-content">
+                    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    <span>Home</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-tab="controls">
+                <div class="btn-content">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span>Controls</span>
+                </div>
+            </button>
+            <button class="nav-btn" data-tab="advanced">
+                <div class="btn-content">
+                    <svg viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    <span>Advanced</span>
+                </div>
+            </button>
+        </div>
+        <div class="divider"></div>
+        <button class="theme-btn" id="themeBtn" aria-label="Toggle theme">
+            <div class="theme-icon-wrapper">
+                <svg class="sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+                <svg class="moon" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
             </div>
-        </div>
-        <div class="flex items-center gap-3">
-            <button id="themeToggleBtn" class="glass-panel w-11 h-11 rounded-full glass-hover flex items-center justify-center glass-btn text-xl shadow-lg">
-                <i class="ph-fill ph-moon dark:hidden"></i>
-                <i class="ph-fill ph-sun hidden dark:block text-yellow-400"></i>
-            </button>
-            <button id="connectBtn" class="glass-panel px-5 py-2.5 rounded-full glass-hover glass-btn font-bold text-sm flex items-center gap-2 shadow-lg">
-                <span class="pulse off" id="statusDot"></span>
-                <span id="connectBtnText">Connect</span>
-            </button>
-        </div>
-    </header>
+        </button>
+    </nav>
 
-    <!-- Main Grid 4-col -->
-    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5 items-start">
+    <!-- Tab Content -->
+    <div class="w-full max-w-6xl">
 
-        <!-- Col 1: Status + Battery + Log -->
-        <div class="flex flex-col gap-5">
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl"><i class="ph-fill ph-battery-high"></i></div>
-                        <div>
-                            <div class="text-sm font-medium text-muted">Battery</div>
-                            <div class="text-3xl font-black" id="batteryDisplay">--%</div>
+        <!-- HOME TAB -->
+        <div id="tab-home" class="tab-content active">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Status Card -->
+                <div class="glass-card">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center text-accent text-2xl"><i class="ph-fill ph-battery-high"></i></div>
+                            <div>
+                                <div class="text-sm font-medium text-muted">Battery</div>
+                                <div class="text-3xl font-black" id="batteryDisplay">--%</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-xs font-semibold text-muted uppercase tracking-wider">Status</div>
+                            <div id="statusBadge" class="badge mt-0.5">—</div>
                         </div>
                     </div>
-                    <div class="text-right">
-                        <div class="text-xs font-semibold text-muted uppercase tracking-wider">Status</div>
-                        <div id="statusBadge" class="badge mt-0.5">—</div>
+                    <div class="w-full h-1.5 bg-sep rounded-full mt-3 overflow-hidden">
+                        <div id="batteryBar" class="h-full bg-gradient-to-r from-green-400 to-blue-400 rounded-full transition-all duration-700" style="width:0%"></div>
+                    </div>
+                    <div class="mt-4 flex items-center gap-3 justify-between">
+                        <span class="text-sm font-medium text-muted" id="deviceNameDisplay">Mustang Dyno</span>
+                        <button id="connectBtn" class="glass-card px-5 py-2 rounded-full glass-btn font-bold text-sm flex items-center gap-2 shadow-lg" style="background:var(--card-bg); border-color:var(--card-border);">
+                            <span class="pulse off" id="statusDot"></span>
+                            <span id="connectBtnText">Connect</span>
+                        </button>
                     </div>
                 </div>
-                <div class="w-full h-1.5 bg-sep rounded-full mt-3 overflow-hidden">
-                    <div id="batteryBar" class="h-full bg-gradient-to-r from-green-400 to-blue-400 rounded-full transition-all duration-700" style="width:0%"></div>
-                </div>
-            </div>
 
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-brackets-curly text-accent"></i>Services</h3>
-                    <button id="refreshServicesBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full flex items-center gap-1"><i class="ph ph-arrows-clockwise"></i>Refresh</button>
-                </div>
-                <div id="servicesList" class="space-y-2 max-h-48 overflow-y-auto scrollable text-xs font-mono">
-                    <div class="text-muted italic">Connect to discover</div>
-                </div>
-            </div>
-
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-terminal text-accent"></i>Log</h3>
-                    <button id="clearLogBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full">Clear</button>
-                </div>
-                <div id="logContainer" class="max-h-40 overflow-y-auto scrollable space-y-0.5">
-                    <div class="log-line"><span class="timestamp">[init]</span><span class="tag info">info</span> Ready — tap Connect.</div>
+                <!-- Quick summary or extra -->
+                <div class="glass-card flex flex-col justify-between">
+                    <div class="text-sm font-medium text-muted">Quick Actions</div>
+                    <div class="grid grid-cols-2 gap-3 mt-2">
+                        <button id="quickCleanup" class="glass-card py-3 text-center rounded-xl glass-btn font-semibold text-sm" style="background:var(--card-bg);">🧼 Cleanup</button>
+                        <button id="quickFind" class="glass-card py-3 text-center rounded-xl glass-btn font-semibold text-sm" style="background:var(--card-bg);">📍 Find</button>
+                        <button id="quickMode" class="glass-card py-3 text-center rounded-xl glass-btn font-semibold text-sm" style="background:var(--card-bg);">🎮 Mode</button>
+                        <button id="quickANC" class="glass-card py-3 text-center rounded-xl glass-btn font-semibold text-sm" style="background:var(--card-bg);">🔇 ANC</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Col 2: EQ + Mode/Cleanup/Find -->
-        <div class="flex flex-col gap-5">
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl feature-card" id="eqCard">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-sliders text-accent"></i>Equalizer</h3>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="eq" data-name="EQ"><i class="ph ph-gear"></i></button>
+        <!-- CONTROLS TAB -->
+        <div id="tab-controls" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- EQ -->
+                <div class="glass-card" id="eqCard">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-sliders text-accent"></i>Equalizer</h3>
+                        <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="eq" data-name="EQ"><i class="ph ph-gear"></i></button>
+                    </div>
+                    <div class="space-y-3" id="eqContainer">
+                        <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Bass</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="bass" /><span class="eq-value text-sm font-bold" id="eqVal-bass">50</span></div>
+                        <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Mid</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="mid" /><span class="eq-value text-sm font-bold" id="eqVal-mid">50</span></div>
+                        <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Treble</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="treble" /><span class="eq-value text-sm font-bold" id="eqVal-treble">50</span></div>
+                        <div class="text-[10px] text-muted text-center">Configure to enable live writes</div>
+                    </div>
                 </div>
-                <div class="space-y-3" id="eqContainer">
-                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Bass</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="bass" /><span class="eq-value text-sm font-bold" id="eqVal-bass">50</span></div>
-                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Mid</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="mid" /><span class="eq-value text-sm font-bold" id="eqVal-mid">50</span></div>
-                    <div class="eq-band flex items-center gap-3"><span class="eq-label w-10 text-xs font-semibold text-muted">Treble</span><input type="range" min="0" max="100" value="50" class="flex-1" data-band="treble" /><span class="eq-value text-sm font-bold" id="eqVal-treble">50</span></div>
-                    <div class="text-[10px] text-muted text-center">Configure to enable live writes</div>
-                </div>
-            </div>
 
-            <div class="grid grid-cols-3 gap-3">
-                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="modeCard">
-                    <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl mb-2"><i class="ph-fill ph-game-controller"></i></div>
-                    <span class="text-xs font-semibold text-muted uppercase tracking-wider">Mode</span>
-                    <div class="flex items-center gap-2 mt-1"><span id="modeLabel" class="text-sm font-bold">Music</span><button id="modeToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
-                    <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="mode" data-name="Mode Switch">⚙</button>
-                </div>
-                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="cleanupCard">
-                    <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl mb-2"><i class="ph-fill ph-hand-soap"></i></div>
-                    <span class="text-xs font-semibold text-muted uppercase tracking-wider">Cleanup</span>
-                    <button id="cleanupBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Run</button>
-                    <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="cleanup" data-name="Quick Cleanup">⚙</button>
-                </div>
-                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="findCard">
-                    <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl mb-2"><i class="ph-fill ph-radar"></i></div>
-                    <span class="text-xs font-semibold text-muted uppercase tracking-wider">Find</span>
-                    <button id="findBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Ping</button>
-                    <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="find" data-name="Find My Buds">⚙</button>
-                </div>
-            </div>
-
-            <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card" id="renameCard">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 text-xl"><i class="ph-fill ph-pencil"></i></div>
-                        <div><span class="text-xs font-semibold text-muted uppercase tracking-wider">Rename</span>
-                            <div class="flex items-center gap-2 mt-0.5"><input id="renameInput" type="text" value="Dyno Buds" class="bg-transparent border-b border-sep text-sm font-bold w-32 focus:border-accent transition-colors" maxlength="20" /><button id="renameBtn" class="text-xs font-bold glass-btn glass-hover px-3 py-1 rounded-full glass-hover border border-sep">Set</button></div>
+                <!-- Toggles & Actions -->
+                <div class="space-y-5">
+                    <div class="glass-card">
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="flex flex-col items-center text-center" id="modeCard">
+                                <div class="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl mb-1"><i class="ph-fill ph-game-controller"></i></div>
+                                <span class="text-xs font-semibold text-muted uppercase tracking-wider">Mode</span>
+                                <div class="flex items-center gap-2 mt-1"><span id="modeLabel" class="text-sm font-bold">Music</span><button id="modeToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
+                                <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="mode" data-name="Mode Switch">⚙</button>
+                            </div>
+                            <div class="flex flex-col items-center text-center" id="cleanupCard">
+                                <div class="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl mb-1"><i class="ph-fill ph-hand-soap"></i></div>
+                                <span class="text-xs font-semibold text-muted uppercase tracking-wider">Cleanup</span>
+                                <button id="cleanupBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Run</button>
+                                <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="cleanup" data-name="Quick Cleanup">⚙</button>
+                            </div>
+                            <div class="flex flex-col items-center text-center" id="findCard">
+                                <div class="w-10 h-10 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl mb-1"><i class="ph-fill ph-radar"></i></div>
+                                <span class="text-xs font-semibold text-muted uppercase tracking-wider">Find</span>
+                                <button id="findBtn" class="mt-1 text-sm font-bold glass-btn px-4 py-1 rounded-full glass-hover border border-sep w-full">Ping</button>
+                                <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="find" data-name="Find My Buds">⚙</button>
+                            </div>
                         </div>
                     </div>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="rename" data-name="Rename"><i class="ph ph-gear"></i></button>
+
+                    <div class="glass-card" id="renameCard">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500 text-xl"><i class="ph-fill ph-pencil"></i></div>
+                                <div><span class="text-xs font-semibold text-muted uppercase tracking-wider">Rename</span>
+                                    <div class="flex items-center gap-2 mt-0.5"><input id="renameInput" type="text" value="Dyno Buds" class="bg-transparent border-b border-sep text-sm font-bold w-32 focus:border-accent transition-colors" maxlength="20" /><button id="renameBtn" class="text-xs font-bold glass-btn glass-hover px-3 py-1 rounded-full glass-hover border border-sep">Set</button></div>
+                                </div>
+                            </div>
+                            <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="rename" data-name="Rename"><i class="ph ph-gear"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="glass-card" id="gestureCard">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-hand-tap text-accent"></i>Gestures</h3>
+                            <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="gesture" data-name="Gesture Mapping"><i class="ph ph-gear"></i></button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div><span class="text-xs font-semibold text-muted">Left</span>
+                                <select class="w-full mt-1 glass-card rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
+                                <select class="w-full mt-1.5 glass-card rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
+                            </div>
+                            <div><span class="text-xs font-semibold text-muted">Right</span>
+                                <select class="w-full mt-1 glass-card rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
+                                <select class="w-full mt-1.5 glass-card rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
+                            </div>
+                        </div>
+                        <button id="gestureApplyBtn" class="w-full mt-3 py-2 rounded-xl bg-accent/10 text-accent font-bold glass-btn text-sm">Apply Gestures</button>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-3">
+                        <div class="glass-card flex flex-col items-center text-center" id="ancCard">
+                            <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl mb-1"><i class="ph-fill ph-ear"></i></div>
+                            <span class="text-xs font-semibold text-muted uppercase tracking-wider">ANC</span>
+                            <div class="flex items-center gap-2 mt-1"><span id="ancLabel" class="text-sm font-bold">Off</span><button id="ancToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
+                            <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="anc" data-name="ANC Toggle">⚙</button>
+                        </div>
+                        <div class="glass-card flex flex-col items-center text-center" id="dualCard">
+                            <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 text-xl mb-1"><i class="ph-fill ph-devices"></i></div>
+                            <span class="text-xs font-semibold text-muted uppercase tracking-wider">Dual Pair</span>
+                            <div class="flex items-center gap-2 mt-1"><span id="dualLabel" class="text-sm font-bold">Off</span><button id="dualToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
+                            <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="dual" data-name="Dual Pairing">⚙</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Col 3: Gestures + ANC/Dual -->
-        <div class="flex flex-col gap-5">
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl feature-card" id="gestureCard">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph-fill ph-hand-tap text-accent"></i>Gestures</h3>
-                    <button class="config-trigger text-xs text-muted glass-btn glass-hover px-2 py-1 rounded-full" data-feature="gesture" data-name="Gesture Mapping"><i class="ph ph-gear"></i></button>
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div><span class="text-xs font-semibold text-muted">Left</span>
-                        <select class="w-full mt-1 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
-                        <select class="w-full mt-1.5 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
+        <!-- ADVANCED TAB -->
+        <div id="tab-advanced" class="tab-content">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                <!-- Services -->
+                <div class="glass-card">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-brackets-curly text-accent"></i>Services</h3>
+                        <button id="refreshServicesBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full flex items-center gap-1"><i class="ph ph-arrows-clockwise"></i>Refresh</button>
                     </div>
-                    <div><span class="text-xs font-semibold text-muted">Right</span>
-                        <select class="w-full mt-1 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Tap: Play/Pause</option><option>Tap: Next</option><option>Tap: Previous</option><option>Tap: Volume Up</option><option>Tap: Volume Down</option><option>Hold: ANC</option><option>Hold: Voice Assistant</option></select>
-                        <select class="w-full mt-1.5 glass-panel rounded-xl px-3 py-2 text-sm font-medium bg-transparent border border-sep"><option>Double Tap: Next</option><option>Double Tap: Previous</option><option>Double Tap: Play/Pause</option><option>Double Tap: Volume Up</option></select>
+                    <div id="servicesList" class="space-y-2 max-h-64 overflow-y-auto scrollable text-xs font-mono">
+                        <div class="text-muted italic">Connect to discover</div>
                     </div>
                 </div>
-                <button id="gestureApplyBtn" class="w-full mt-3 py-2 rounded-xl bg-accent/10 text-accent font-bold glass-btn text-sm">Apply Gestures</button>
-            </div>
 
-            <div class="grid grid-cols-2 gap-3">
-                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="ancCard">
-                    <div class="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-500 text-xl mb-2"><i class="ph-fill ph-ear"></i></div>
-                    <span class="text-xs font-semibold text-muted uppercase tracking-wider">ANC</span>
-                    <div class="flex items-center gap-2 mt-1"><span id="ancLabel" class="text-sm font-bold">Off</span><button id="ancToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
-                    <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="anc" data-name="ANC Toggle">⚙</button>
-                </div>
-                <div class="glass-panel rounded-[2rem] p-4 shadow-xl feature-card flex flex-col items-center text-center" id="dualCard">
-                    <div class="w-10 h-10 rounded-full bg-cyan-500/10 flex items-center justify-center text-cyan-500 text-xl mb-2"><i class="ph-fill ph-devices"></i></div>
-                    <span class="text-xs font-semibold text-muted uppercase tracking-wider">Dual Pair</span>
-                    <div class="flex items-center gap-2 mt-1"><span id="dualLabel" class="text-sm font-bold">Off</span><button id="dualToggleBtn" class="toggle-track" style="width:36px;height:20px;"><span class="toggle-thumb" style="width:16px;height:16px;top:2px;left:2px;"></span></button></div>
-                    <button class="config-trigger text-[10px] text-muted glass-btn glass-hover px-2 py-0.5 rounded-full mt-1" data-feature="dual" data-name="Dual Pairing">⚙</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Col 4: Advanced & extras -->
-        <div class="flex flex-col gap-5">
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl">
-                <details class="group">
-                    <summary class="flex justify-between items-center cursor-pointer list-none">
-                        <span class="font-bold text-sm flex items-center gap-2"><i class="ph ph-code text-accent"></i>Advanced GATT</span>
-                        <span class="text-muted text-xs group-open:rotate-180 transition-transform"><i class="ph ph-caret-down"></i></span>
-                    </summary>
-                    <div class="mt-3 space-y-3">
-                        <div class="flex gap-2"><input id="rawServiceUuid" type="text" placeholder="Service UUID" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><input id="rawCharUuid" type="text" placeholder="Char UUID" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /></div>
-                        <div class="flex gap-2"><input id="rawCommandHex" type="text" placeholder="Hex to write" class="flex-1 glass-panel rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><button id="rawWriteBtn" class="px-4 py-2 rounded-xl bg-accent text-white font-bold glass-btn text-xs">Write</button><button id="rawReadBtn" class="px-4 py-2 rounded-xl glass-hover font-bold glass-btn text-xs border border-sep">Read</button></div>
-                        <div id="rawResult" class="text-xs font-mono text-muted p-2 rounded-xl bg-sep/20 min-h-8 break-all">Awaiting action</div>
+                <!-- Log & Raw -->
+                <div class="space-y-5">
+                    <div class="glass-card">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="font-bold text-sm flex items-center gap-2"><i class="ph ph-terminal text-accent"></i>Log</h3>
+                            <button id="clearLogBtn" class="text-xs font-semibold text-muted glass-btn glass-hover px-3 py-1 rounded-full">Clear</button>
+                        </div>
+                        <div id="logContainer" class="max-h-48 overflow-y-auto scrollable space-y-0.5">
+                            <div class="log-line"><span class="timestamp">[init]</span><span class="tag info">info</span> Ready — tap Connect.</div>
+                        </div>
                     </div>
-                </details>
-            </div>
-            <div class="glass-panel rounded-[2rem] p-5 shadow-xl text-center text-muted text-xs">
-                <p class="font-medium">💡 Each feature has a ⚙ button to set its UUIDs &amp; command bytes.</p>
-                <p class="mt-1">Use the Advanced panel to test raw commands.</p>
+
+                    <div class="glass-card">
+                        <details class="group">
+                            <summary class="flex justify-between items-center cursor-pointer list-none">
+                                <span class="font-bold text-sm flex items-center gap-2"><i class="ph ph-code text-accent"></i>Raw GATT Explorer</span>
+                                <span class="text-muted text-xs group-open:rotate-180 transition-transform"><i class="ph ph-caret-down"></i></span>
+                            </summary>
+                            <div class="mt-3 space-y-3">
+                                <div class="flex gap-2"><input id="rawServiceUuid" type="text" placeholder="Service UUID" class="flex-1 glass-card rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><input id="rawCharUuid" type="text" placeholder="Char UUID" class="flex-1 glass-card rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /></div>
+                                <div class="flex gap-2"><input id="rawCommandHex" type="text" placeholder="Hex to write" class="flex-1 glass-card rounded-xl px-3 py-2 text-xs font-mono bg-transparent border border-sep" /><button id="rawWriteBtn" class="px-4 py-2 rounded-xl bg-accent text-white font-bold glass-btn text-xs">Write</button><button id="rawReadBtn" class="px-4 py-2 rounded-xl glass-hover font-bold glass-btn text-xs border border-sep">Read</button></div>
+                                <div id="rawResult" class="text-xs font-mono text-muted p-2 rounded-xl bg-sep/20 min-h-8 break-all">Awaiting action</div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
             </div>
         </div>
 
     </div>
 
-    <footer class="mt-8 text-center text-xs text-muted font-medium flex flex-wrap justify-center gap-4 items-center">
-        <span>Mustang Dyno · Web Bluetooth</span>
-        <span class="w-1 h-1 rounded-full bg-sep"></span>
-        <span>Glass UI · <span class="text-accent">live</span></span>
-    </footer>
-
     <script>
         (function() {
             'use strict';
 
-            // ----- DOM refs -----
+            // DOM refs
             const $ = (s, el = document) => el.querySelector(s);
             const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 
+            // Navigation
+            const navBtns = $$('.nav-btn');
+            const activePill = $('#activePill');
+            const tabs = {
+                home: $('#tab-home'),
+                controls: $('#tab-controls'),
+                advanced: $('#tab-advanced')
+            };
+            const themeBtn = $('#themeBtn');
+            const nav = $('#nav');
+            const glare = $('#glare');
+
+            // Config overlay
+            const configOverlay = $('#configOverlay');
+            const configCloseBtn = $('#configCloseBtn');
+            const configCancelBtn = $('#configCancelBtn');
+            const configSaveBtn = $('#configSaveBtn');
+            const configFeatureName = $('#configFeatureName');
+            const configServiceUuid = $('#configServiceUuid');
+            const configCharUuid = $('#configCharUuid');
+            const configCommandHex = $('#configCommandHex');
+            const configTriggers = $$('.config-trigger');
+
+            // Other UI
             const connectBtn = $('#connectBtn');
             const connectBtnText = $('#connectBtnText');
             const statusDot = $('#statusDot');
@@ -496,15 +726,6 @@
             const logContainer = $('#logContainer');
             const clearLogBtn = $('#clearLogBtn');
             const refreshServicesBtn = $('#refreshServicesBtn');
-            const themeToggleBtn = $('#themeToggleBtn');
-            const configOverlay = $('#configOverlay');
-            const configCloseBtn = $('#configCloseBtn');
-            const configCancelBtn = $('#configCancelBtn');
-            const configSaveBtn = $('#configSaveBtn');
-            const configFeatureName = $('#configFeatureName');
-            const configServiceUuid = $('#configServiceUuid');
-            const configCharUuid = $('#configCharUuid');
-            const configCommandHex = $('#configCommandHex');
 
             const eqSliders = $$('#eqContainer input[type="range"]');
             const modeToggleBtn = $('#modeToggleBtn');
@@ -518,15 +739,21 @@
             const renameBtn = $('#renameBtn');
             const renameInput = $('#renameInput');
             const gestureApplyBtn = $('#gestureApplyBtn');
+
             const rawServiceUuid = $('#rawServiceUuid');
             const rawCharUuid = $('#rawCharUuid');
             const rawCommandHex = $('#rawCommandHex');
             const rawWriteBtn = $('#rawWriteBtn');
             const rawReadBtn = $('#rawReadBtn');
             const rawResult = $('#rawResult');
-            const configTriggers = $$('.config-trigger');
 
-            // ---- state ----
+            // Quick actions in Home tab
+            const quickCleanup = $('#quickCleanup');
+            const quickFind = $('#quickFind');
+            const quickMode = $('#quickMode');
+            const quickANC = $('#quickANC');
+
+            // ---- State ----
             let device = null;
             let gattServer = null;
             let isConnected = false;
@@ -547,7 +774,7 @@
             };
             let activeConfigFeature = null;
 
-            // ---- helpers ----
+            // ---- Helpers ----
             function log(msg, type = 'info', data = '') {
                 const ts = new Date().toLocaleTimeString();
                 const el = document.createElement('div');
@@ -619,7 +846,64 @@
                 servicesList.innerHTML = html;
             }
 
-            // ---- BLE connection with retry ----
+            // ---- Navigation & Theme ----
+            function updatePill(btn, smooth = true) {
+                if (!btn) return;
+                if (!smooth) activePill.style.transition = 'none';
+                else activePill.style.transition =
+                'transform 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), width 0.5s cubic-bezier(0.34, 1.2, 0.64, 1), background 0.5s ease, box-shadow 0.5s ease';
+                activePill.style.width = `${btn.offsetWidth}px`;
+                activePill.style.transform = `translateX(${btn.offsetLeft}px)`;
+                if (!smooth) setTimeout(() => activePill.style.transition = '', 50);
+            }
+
+            function switchTab(tabId) {
+                Object.keys(tabs).forEach(key => {
+                    tabs[key].classList.toggle('active', key === tabId);
+                });
+                navBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === tabId);
+                    if (btn.dataset.tab === tabId) updatePill(btn);
+                });
+            }
+
+            navBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    switchTab(btn.dataset.tab);
+                });
+            });
+
+            themeBtn.addEventListener('click', () => {
+                const root = document.documentElement;
+                const isDark = root.getAttribute('data-theme') === 'dark';
+                root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+                // reposition pill in case font-weight changes
+                setTimeout(() => {
+                    const active = document.querySelector('.nav-btn.active');
+                    if (active) updatePill(active);
+                }, 100);
+            });
+
+            // Glare
+            nav.addEventListener('mousemove', (e) => {
+                const rect = nav.getBoundingClientRect();
+                glare.style.setProperty('--x', `${e.clientX - rect.left}px`);
+                glare.style.setProperty('--y', `${e.clientY - rect.top}px`);
+            });
+
+            // Init pill
+            setTimeout(() => {
+                const initial = document.querySelector('.nav-btn.active');
+                if (initial) updatePill(initial, false);
+            }, 50);
+
+            // Resize
+            window.addEventListener('resize', () => {
+                const active = document.querySelector('.nav-btn.active');
+                if (active) updatePill(active, false);
+            });
+
+            // ---- BLE ----
             async function connect() {
                 if (isConnecting) return;
                 if (isConnected && gattServer) {
@@ -639,11 +923,10 @@
                 log('Requesting device…', 'info');
 
                 try {
-                    // Request with common services to improve compatibility
                     const commonServices = [
-                        '0000180f-0000-1000-8000-00805f9b34fb', // Battery
-                        '00001800-0000-1000-8000-00805f9b34fb', // Generic Access
-                        '00001801-0000-1000-8000-00805f9b34fb', // Generic Attribute
+                        '0000180f-0000-1000-8000-00805f9b34fb',
+                        '00001800-0000-1000-8000-00805f9b34fb',
+                        '00001801-0000-1000-8000-00805f9b34fb'
                     ];
                     device = await navigator.bluetooth.requestDevice({
                         acceptAllDevices: true,
@@ -659,7 +942,6 @@
                 } catch (err) {
                     log(`Connection error: ${err.message}`, 'error');
                     setStatus(false);
-                    // Retry once after short delay
                     if (!err.message.includes('cancelled')) {
                         log('Retrying in 1s…', 'warn');
                         await new Promise(r => setTimeout(r, 1000));
@@ -732,7 +1014,6 @@
                 } catch (e) { log(`Battery read failed: ${e.message}`, 'warn'); }
             }
 
-            // ---- write helper ----
             async function writeToFeature(featureKey, hexBytes) {
                 if (!isConnected || !gattServer) { log('Not connected', 'error'); return false; }
                 const cfg = featureConfigs[featureKey];
@@ -778,9 +1059,9 @@
                         btn.classList.toggle('active', s);
                         labelEl.textContent = s ? onLabel : offLabel; } };
             }
-            setupToggle(modeToggleBtn, modeLabel, 'Gaming', 'Music', 'mode', '01', '00');
-            setupToggle(ancToggleBtn, ancLabel, 'On', 'Off', 'anc', '01', '00');
-            setupToggle(dualToggleBtn, dualLabel, 'On', 'Off', 'dual', '01', '00');
+            const modeToggle = setupToggle(modeToggleBtn, modeLabel, 'Gaming', 'Music', 'mode', '01', '00');
+            const ancToggle = setupToggle(ancToggleBtn, ancLabel, 'On', 'Off', 'anc', '01', '00');
+            const dualToggle = setupToggle(dualToggleBtn, dualLabel, 'On', 'Off', 'dual', '01', '00');
 
             // ---- Buttons ----
             cleanupBtn.addEventListener('click', () => {
@@ -819,6 +1100,12 @@
                     writeToFeature('gesture', cmd);
                 } else log('Gestures not configured', 'warn');
             });
+
+            // ---- Quick actions ----
+            quickCleanup.addEventListener('click', () => { cleanupBtn.click(); });
+            quickFind.addEventListener('click', () => { findBtn.click(); });
+            quickMode.addEventListener('click', () => { modeToggleBtn.click(); });
+            quickANC.addEventListener('click', () => { ancToggleBtn.click(); });
 
             // ---- Config overlay ----
             configTriggers.forEach(btn => {
@@ -905,7 +1192,6 @@
             clearLogBtn.addEventListener('click', () => { logContainer.innerHTML = '';
                 logCount = 0;
                 log('Log cleared', 'info'); });
-            themeToggleBtn.addEventListener('click', () => document.documentElement.classList.toggle('dark'));
             connectBtn.addEventListener('click', connect);
 
             // ---- Init ----
@@ -915,7 +1201,7 @@
             // Keyboard shortcut
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfig(); });
 
-            console.log('🟣 Dyno Controller · Glass UI');
+            console.log('🟣 Dyno Controller · Liquid Glass UI');
             console.log('🔗 If connection fails, close GoBoult app and retry.');
         })();
     </script>
