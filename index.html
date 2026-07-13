@@ -877,7 +877,6 @@
                 const root = document.documentElement;
                 const isDark = root.getAttribute('data-theme') === 'dark';
                 root.setAttribute('data-theme', isDark ? 'light' : 'dark');
-                // reposition pill in case font-weight changes
                 setTimeout(() => {
                     const active = document.querySelector('.nav-btn.active');
                     if (active) updatePill(active);
@@ -897,7 +896,6 @@
                 if (initial) updatePill(initial, false);
             }, 50);
 
-            // Resize
             window.addEventListener('resize', () => {
                 const active = document.querySelector('.nav-btn.active');
                 if (active) updatePill(active, false);
@@ -1198,7 +1196,6 @@
             setStatus(false);
             log('Dyno Controller ready. Tap Connect.', 'info');
 
-            // Keyboard shortcut
             document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeConfig(); });
 
             console.log('🟣 Dyno Controller · Liquid Glass UI');
